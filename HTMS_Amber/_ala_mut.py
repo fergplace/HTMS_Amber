@@ -146,18 +146,16 @@ def general_method(input_dict : dict, pdbfh,
                                          name_to, 
                                          idx,
                                          naming_conv)
-    #####################################################################################
-    #################################### tleap gen ######################################
-    #####################################################################################
-    ##TODO add options for default
+    
+    ######################### tleap gen ######################################
+    
+    
     tleap_file_name = _defaults.tleap_in_gen( input_dict,
                                     pdbfh_base_name, 
-                                    file_handle_mut_base,)
+                                    file_handle_mut_base)
     
-    #####################################################################################
-    ############################### MMPBSA sh file gen ##################################
-    #####################################################################################
-    ##TODO add options for default 
+
+    ########################## MMPBSA sh file gen #################
     run_MMPBSA_sh_name = _defaults.mmbpsa_sh_gen(input_dict , 
                                        pdbfh_base_name , 
                                        file_handle_mut_base,

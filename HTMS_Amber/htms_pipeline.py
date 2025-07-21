@@ -3,7 +3,8 @@ import sys
 import subprocess
 import numpy as np 
 import argparse 
-from _defaults import tleap_gen, mut_bash, mmpbsa_in 
+from _defaults import mmbpsa_in_gen
+from _ala_mut import general_method 
 
 
 
@@ -58,7 +59,7 @@ def main(args):
     pdbfh = input_dict["WILD_TYPE"][0]
     pdbfh_base_name = os.path.basename(pdbfh).split(".")[0] #getting the base name 
     print(input_dict["MUTATIONS"])
-    #MMPBSA in file gen 
+    ####################MMPBSA in file gen 
 
     mmbpsa_in_gen(input_dict)
     for i in range(len(input_dict["MUTATIONS"])) : 

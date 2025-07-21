@@ -36,7 +36,6 @@ def input_args_check( input_arg_path) -> dict :
                     input_fields[tmp_key[1]] = tmp_key[2:] #for args of len >1 e.g. MUTATIONS
     
     
-    ##TODO error without an input pdb and a mutation 
     return input_fields
 
 def split_and_mut(pdbfh, pdbfh_base_name, name_from, name_to, idx, naming_conv) :
