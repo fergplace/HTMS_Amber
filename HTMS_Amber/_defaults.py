@@ -31,6 +31,21 @@ def tleap_gen(pdbfh_base_name,file_handle_mut_all ) -> list:
         f"quit"]
     return tleap_wild_in
 
+
+def tleap_in_gen( input_dict,  pdbfh_base_name, file_handle_mut_base ): 
+    if input_dict["LEAP.IN_PATH" ] == [] :
+        tleap_mut_in = tleap_gen(pdbfh_base_name, file_handle_mut_base)
+        with open("tleap_mut.in", "w+") as tleap : 
+            for line in tleap_mut_in : 
+                tleap.write(f"{line}\n")
+            tleap.close()
+        os.system(f"dos2unix tleap_mut.in") #not sure if needed. 
+        tleap_file_name ="tleap_mut.in"
+    else : 
+        tleap_file_name =input_dict["LEAP.IN_PATH" ]
+    return  tleap_file_name
+
+
 #TODO fix source path 
 def mut_bash( pdbfh_base_name, 
              file_handle_mut_all, 
@@ -79,6 +94,23 @@ FINAL_RESULTS_MMPBSA_tleap_{file_handle_mut_all}.dat\
     #     f"{cwd}/change_radii_to_opt.py {file_handle_mut_all}_ligand.prmtop",
     #     f"{cwd}/change_radii_to_opt.py {pdbfh_base_name}_recpt.prmtop",
 
+def mmbpsa_sh_gen(input_dict , pdbfh_base_name,
+                  file_handle_mut_base, cwd,
+                  amber_source : str = "amber22/amber.sh"):
+    if input_dict["MMPBSA.SH_PATH"] == []:
+        mut_bash_file = mut_bash(pdbfh_base_name, 
+                                 file_handle_mut_base, 
+                                 cwd, amber_source)
+        
+        with open("run_MMPBSA.sh", "w+") as mut_bash_sh : 
+            for line in mut_bash_file : 
+                mut_bash_sh.write(f"{line}\n")
+            mut_bash_sh.close()
+            run_MMPBSA_sh_name = "run_MMPBSA.sh"
+    else :
+        run_MMPBSA_sh_name = input_dict["MMPBSA.SH_PATH"]
+    return run_MMPBSA_sh_name
+
 def mmpbsa_in()->list:
     mmpbsa_in_data = [
 f"""
@@ -97,3 +129,13 @@ sample input file for running alanine scanning
 /
 """] 
     return mmpbsa_in_data
+
+
+
+def mmbpsa_in_gen(input_dict ) : 
+    if input_dict["MMPBSA.IN_PATH"] == []:
+        mmpbsa_in_list = mmpbsa_in()
+        with open(f"mmpbsa.in", "w+") as mmpbsa:
+            for line in mmpbsa_in_list :
+                mmpbsa.write(f"{line}")
+            mmpbsa.close()

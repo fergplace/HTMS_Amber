@@ -1,8 +1,5 @@
 
 
-
-
-
 amino_acids = {
     'A': 'ALA',  # Alanine
     'R': 'ARG',  # Arginine
@@ -25,3 +22,5 @@ amino_acids = {
     'Y': 'TYR',  # Tyrosine
     'V': 'VAL',  # Valine
 }
+
+
