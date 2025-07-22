@@ -103,7 +103,7 @@ def split_and_mut(pdbfh, pdbfh_base_name, name_from, name_to, idx, naming_conv) 
 
  
 def general_method(input_dict : dict, pdbfh, 
-                   pdbfh_base_name, mutation) : 
+                   pdbfh_base_name, mutation, just_build) : 
     """
     general process: 
     input_dict: from input_args_check
@@ -125,8 +125,9 @@ def general_method(input_dict : dict, pdbfh,
     #string for dir name
     dir_name = pdbfh_base_name + "_" + naming_conv + "_dir"
     #path to dir
-    dir_name_path = "./" + dir_name
+    dir_name_path =os.path.join(".", dir_name)
     #path for other files
+  
     os.system(f"mkdir {dir_name_path}")
     
     dir_name_path_full = dir_name_path + "/"
@@ -161,8 +162,10 @@ def general_method(input_dict : dict, pdbfh,
                                        file_handle_mut_base,
                                        cwd)
 
-
-    os.system(f"sbatch {run_MMPBSA_sh_name}")
+    if just_build:
+        pass
+    else:
+        os.system(f"sbatch {run_MMPBSA_sh_name}")
     os.chdir("..")
     return 
 

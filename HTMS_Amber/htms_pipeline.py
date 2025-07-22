@@ -6,11 +6,7 @@ import argparse
 from _defaults import mmbpsa_in_gen
 from _ala_mut import general_method 
 
-
-
-
-
-def input_args_check( input_arg_path) -> dict :
+def input_args_check( input_arg_path = "tmp_input_file_salt") -> dict :
     cwd = os.getcwd()
     '''
     want option for default names, and dynamic naming: 
@@ -32,7 +28,7 @@ def input_args_check( input_arg_path) -> dict :
                 "MMPBSA.SH_PATH": []
                 }
 
-    with open("tmp_input_file_salt.txt", "r") as input_file:
+    with open(input_arg_path, "r") as input_file:
         for line in input_file:
             if line.startswith("#input"):
                 tmp_key = line.split() #split
@@ -44,18 +40,13 @@ def input_args_check( input_arg_path) -> dict :
 
 
 
-
 def input_args_from_text( file_handle ) -> list :
     with open(file_handle) as input_file :
         for line in input_file : 
-            input_arg_list = [] #add real input here
+            input_arg_list = []
     return input_arg_list 
 
-def main(args):
-    
-    in_file = args.input_file
-    input_dict = input_args_check(in_file)
-    
+def ala_main(input_dict,just_build ):
     pdbfh = input_dict["WILD_TYPE"][0]
     pdbfh_base_name = os.path.basename(pdbfh).split(".")[0] #getting the base name 
     print(input_dict["MUTATIONS"])
@@ -64,14 +55,27 @@ def main(args):
     mmbpsa_in_gen(input_dict)
     for i in range(len(input_dict["MUTATIONS"])) : 
         mutation = input_dict["MUTATIONS"][i]
-        general_method(input_dict, pdbfh, pdbfh_base_name, mutation)
+        general_method(input_dict, pdbfh, pdbfh_base_name, mutation, just_build)
 
+def main(args):
+    
+    in_file = args.input_file
+    input_dict = input_args_check(in_file)
+    just_build = args.just_build
+    
+    ala_main(input_dict,just_build)
+    
 
-    ##TODO add creations of summary file: 
     
 if __name__ == '__main__':
     
     parser = argparse.ArgumentParser(description="High Throughput Mutational Analsys for MM/PB(GB)SA methods in Amber. The tool supports both Alanine and Non-Alanine scanning mutations. See dcoumentation for more details.")
     parser.add_argument("--input_file", type=str, help="Input file with the required parameters for the analysis. ")
+    parser.add_argument(
+        "--just_build",
+        action="store_true", 
+        default=False,      # The default value if the flag is not provided.
+        help="If set, the .sh files for each run will be made but not run."
+    )
     args= parser.parse_args()
     main(args)

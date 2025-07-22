@@ -264,10 +264,7 @@ def main(args):
     print(input_dict["MUTATIONS"])
     ####################MMPBSA in file gen 
 
-    
 
-
-   
     mmbpsa_in_gen(input_dict)
     for i in range(len(input_dict["MUTATIONS"])) : 
         mutation = input_dict["MUTATIONS"][i]
