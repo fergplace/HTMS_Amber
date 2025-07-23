@@ -3,8 +3,12 @@ import sys
 import subprocess
 import numpy as np 
 import argparse 
-from _defaults import mmbpsa_in_gen
-from _ala_mut import general_method 
+from. import  _defaults 
+from . import _ala_mut   
+
+# general_method
+# mmbpsa_in_gen
+
 
 def input_args_check( input_arg_path = "tmp_input_file_salt") -> dict :
     cwd = os.getcwd()
@@ -52,10 +56,10 @@ def ala_main(input_dict,just_build ):
     print(input_dict["MUTATIONS"])
     ####################MMPBSA in file gen 
 
-    mmbpsa_in_gen(input_dict)
+    _defaults.mmbpsa_in_gen(input_dict)
     for i in range(len(input_dict["MUTATIONS"])) : 
         mutation = input_dict["MUTATIONS"][i]
-        general_method(input_dict, pdbfh, pdbfh_base_name, mutation, just_build)
+        _ala_mut.general_method(input_dict, pdbfh, pdbfh_base_name, mutation, just_build)
 
 def main(args):
     

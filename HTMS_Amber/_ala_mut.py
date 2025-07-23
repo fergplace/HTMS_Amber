@@ -1,6 +1,6 @@
 import os
-import _utils
-import _defaults
+from . import _utils
+from . import _defaults
 def mutations(pdb_data, name_from, name_to, idx) -> list:
     '''
     pdb_data    : pdb file we want to mutate

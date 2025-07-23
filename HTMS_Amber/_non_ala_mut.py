@@ -1,8 +1,8 @@
 import sys
 import os
 from abc import ABC, abstractmethod
-from _utils import amino_acids
 import re
+from . import _utils
 from modeller import *
 from modeller.optimizers import MolecularDynamics, ConjugateGradients
 from modeller.automodel import autosched
@@ -46,21 +46,22 @@ def make_restraints(mdl1, aln):
        
 #first argument
 def _extract_mut_info(s):
-    pattern = r'[A-Za-z](\d+)[A-Za-z]'
+    pattern = r'[A-Za-z](\d+)([A-Za-z])'
     match = re.search(pattern, s)
     if match:
         respos = int(match.group(1))
-        restyp = str(match.group(2))
+        restyp_single_letter = str(match.group(2))
+        restyp = _utils.amino_acids[restyp_single_letter]
     else:
         raise ValueError(f"Could not extract residue number from string: {s}")
     return respos, restyp
 
 class mutate_model:
-    def __init__(self, file_name, modelname, chain):
-        self.file_name = file_name #input file name, base pdb
-        self.modelname = modelname #modelname 
+    def __init__(self, modelname, mutation , chain):
+        self.modelname = modelname # #input file name, base pdb
+        self.mutation = mutation
         self.chain = chain
-        self.respos, self.restyp=_extract_mut_info(self.modelname)
+        self.respos, self.restyp=_extract_mut_info(self.mutation)
         
         
     def _do_mut(self):
@@ -99,8 +100,8 @@ class mutate_model:
         self.mdl1.build(initialize_xyz=False, build_method='INTERNAL_COORDINATES')
         self.mdl2 = Model(self.env, file=self.modelname)
         self.mdl1.res_num_from(self.mdl2,self.ali)
-        self.mdl1.write(file=self.modelname+self.file_name+'.tmp')
-        self.mdl1.read(file=self.modelname+self.file_name+'.tmp')
+        self.mdl1.write(file=self.modelname+self.mutation+'.tmp')
+        self.mdl1.read(file=self.modelname+self.mutation+'.tmp')
         make_restraints(self.mdl1, self.ali)
         self.mdl1.env.edat.nonbonded_sel_atoms=1
         self.sched = autosched.loop.make_for_model(self.mdl1)
@@ -116,16 +117,17 @@ class mutate_model:
         self.mdl1.env.edat.nonbonded_sel_atoms=1
         optimize(self.s, self.sched)
         self.s.energy()
-        self.mdl1.write(file=self.modelname+self.file_name+'.pdb')
-        os.remove(self.modelname+self.file_name+'.tmp')
+        self.mdl1.write(file=self.modelname+self.mutation+'.pdb')
+        os.remove(self.modelname+self.mutation+'.tmp')
         
 class multi_mutate_model(mutate_model):
-    def __init__(self, file_name, modelname, chain):
-        self.file_name = file_name #input file name, base pdb
-        self.modelname = modelname #modelname 
+    def __init__(self, modelname, mutation,  chain):
+        self.modelname = modelname #input file name, base pdb
         self.chain = chain
+        self.mutation = mutation 
         self.new_tuple_array_inputs = []
-        for muts in modelname.split("_"):
+        for muts in self.mutation.split("_"):
+
             self.respos , self.restyp = _extract_mut_info(muts)
             self.new_tuple_array_inputs.append((self.respos, self.restyp))
         
@@ -135,15 +137,15 @@ class multi_mutate_model(mutate_model):
             s.mutate(residue_type=restyp)
         
       
-def general_mutate(file_name : str,
-                 modelname : str,
+def general_mutate(modelname : str,
+                   mutation : str,
                  chain = "A" ):
     
-    if len(modelname.split("_") >1 ) : 
-        mutator= multi_mutate_model(file_name, modelname, chain)
+    if len(modelname.split("_")) >1  : 
+        mutator= multi_mutate_model(modelname,mutation, chain)
         mutator.mutate_pdb()
     elif _extract_mut_info(modelname) is not None:
-        mutator = mutate_model(file_name, modelname, chain)
+        mutator = mutate_model(modelname,mutation, chain)
         mutator.mutate_pdb()
     else :
         raise ValueError(f"Invalid modelname format: {modelname}. Expected format is '<resnum><resname>' or '<resnum><resname>_<resnum><resname>...'")
