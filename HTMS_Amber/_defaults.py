@@ -22,14 +22,17 @@ def tleap_gen(pdbfh_base_name,file_handle_mut_all ) -> list:
         f"saveamberparm com {pdbfh_base_name}.prmtop {pdbfh_base_name}.inpcrd",
         f"saveamberparm ligand {pdbfh_base_name}_ligand.prmtop {pdbfh_base_name}_ligand.inpcrd",
         f"saveamberparm rcp {pdbfh_base_name}_recpt.prmtop {pdbfh_base_name}_recpt.inpcrd",
-        f"solvatebox com TIP3PBOX 12.0",
-        f"saveamberparm com {pdbfh_base_name}_solvated.prmtop {pdbfh_base_name}_solvated.inpcrd\n",
+        f"com_md = loadpdb {pdbfh_base_name}.pdb"  ,
+        f"solvatebox com_md OPCBOX 12.0",
+        f"addIons2 com_md Na+ 0",
+        f"saveamberparm com_md {pdbfh_base_name}_solvated.prmtop {pdbfh_base_name}_solvated.inpcrd\n",
         f"com_mut = loadpdb {file_handle_mut_all}.pdb",
         f"ligand_mut = loadpdb {file_handle_mut_all}_ligand.pdb\n",
         f"saveamberparm com_mut {file_handle_mut_all}.prmtop {file_handle_mut_all}.inpcrd",
         f"saveamberparm ligand_mut {file_handle_mut_all}_ligand.prmtop {file_handle_mut_all}_ligand.inpcrd",
         f"quit"]
     return tleap_wild_in
+
 
 
 def tleap_in_gen( input_dict,  pdbfh_base_name, file_handle_mut_base ): 

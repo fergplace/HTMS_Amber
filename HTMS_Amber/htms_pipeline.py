@@ -5,7 +5,7 @@ import numpy as np
 import argparse 
 from. import  _defaults 
 from . import _ala_mut   
-
+from . import _non_ala_mut
 # general_method
 # mmbpsa_in_gen
 
@@ -60,6 +60,18 @@ def ala_main(input_dict,just_build ):
     for i in range(len(input_dict["MUTATIONS"])) : 
         mutation = input_dict["MUTATIONS"][i]
         _ala_mut.general_method(input_dict, pdbfh, pdbfh_base_name, mutation, just_build)
+
+def non_ala_main():
+
+    pdbfh =pdbfh #"6m0j_noHet.pdb"
+    pdbfh_base_name = os.path.basename(pdbfh).split(".")[0]
+
+    _non_ala_mut.split(pdbfh, pdbfh_base_name)
+
+    tleap_file_name = _defaults.tleap_in_gen(pdbfh_base_name)
+
+    all_process_sh_gen(pdbfh_base_name)
+    MPBSA_sh_helper(pdbfh_base_name)
 
 def main(args):
     

@@ -6,7 +6,7 @@ from . import _utils
 from modeller import *
 from modeller.optimizers import MolecularDynamics, ConjugateGradients
 from modeller.automodel import autosched
-
+from . import _ala_mut
 """ The bullk of the code is taken from the Modeller example script
 mutate_model.py, which is part of the Modeller distribution."""
 
@@ -150,4 +150,58 @@ def general_mutate(modelname : str,
     else :
         raise ValueError(f"Invalid modelname format: {modelname}. Expected format is '<resnum><resname>' or '<resnum><resname>_<resnum><resname>...'")
     
+
+def split(pdbfh, pdbfh_base_name) :
+    with open(pdbfh, "r") as f :
+        pdb_data = f.readlines()
+    #splits
+    struct_pdb_data = _ala_mut.pdb_split(pdb_data, 0 )
+    file_handle_structure = pdbfh_base_name + "_recpt.pdb"
+    with open(file_handle_structure, "w+") as pdb_file : 
+        for line in struct_pdb_data : 
+            pdb_file.write(f"{line}")
+        pdb_file.close()
+    ligand_pdb = _ala_mut.pdb_split(pdb_data, 1 )
+    file_handle_ligand = pdbfh_base_name + "_ligand.pdb"
+    with open(file_handle_ligand, "w+") as pdb_file : 
+        for line in ligand_pdb : 
+            pdb_file.write(f"{line}")
+        pdb_file.close()
+
+def tleap_in_gen( pdbfh_base_name ): 
+   
+	tleap_mut_in = tleap_gen(pdbfh_base_name )
+	with open("tleap_mut.in", "w+") as tleap : 
+		for line in tleap_mut_in : 
+			tleap.write(f"{line}\n")
+		tleap.close()
+	os.system(f"dos2unix tleap_mut.in") #not sure if needed. 
+	tleap_file_name ="tleap_mut.in"
+    
+	return  tleap_file_name
+
+def tleap_gen(pdbfh_base_name ) -> list:
+    '''
+    pdbfh_base_name     : base name of the pdb file
+    returns             : tleap file as a list 
+ 
+    
+    '''
+
+    tleap_in = [f"source leaprc.protein.ff19SB",
+        f"source leaprc.water.opc",
+        f"set default PBRadii mbondi2\n",
+        f"com = loadpdb {pdbfh_base_name}.pdb"  ,
+        f"ligand = loadpdb {pdbfh_base_name}_ligand.pdb" ,
+        f"rcp = loadpdb {pdbfh_base_name}_recpt.pdb\n",
+        f"saveamberparm com {pdbfh_base_name}.prmtop {pdbfh_base_name}.inpcrd",
+        f"saveamberparm ligand {pdbfh_base_name}_ligand.prmtop {pdbfh_base_name}_ligand.inpcrd",
+        f"saveamberparm rcp {pdbfh_base_name}_recpt.prmtop {pdbfh_base_name}_recpt.inpcrd",
+        f"com_md = loadpdb {pdbfh_base_name}.pdb"  ,
+        f"solvatebox com_md OPCBOX 12.0",
+        f"addIons2 com_md Na+ 0",
+        f"saveamberparm com_md {pdbfh_base_name}_solvated.prmtop {pdbfh_base_name}_solvated.inpcrd\n",
+        f"quit"]
+    return tleap_in
+
 
