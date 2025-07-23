@@ -1,4 +1,5 @@
-
+import os
+import sys
 
 amino_acids = {
     'A': 'ALA',  # Alanine
@@ -46,3 +47,25 @@ three_letter_amino = {
     'VAL': 'V'
 }
 
+
+def get_amber_home_path():
+    """
+    Retrieves the AMBERHOME environment variable.
+    Raises an error if AMBERHOME is not set.
+    """
+    amber_home = os.environ.get('AMBERHOME')
+    if amber_home is None:
+        raise EnvironmentError(
+            "AMBERHOME environment variable is not set. "
+            "Please ensure you have loaded the Amber module (e.g., 'module load amber') "
+            "before running this script."
+        )
+    return amber_home
+
+def check_amber_loaded():
+    try:
+        amber_path = get_amber_home_path()
+    except EnvironmentError as e:
+        print(f"Error: {e}")
+
+        sys.exit(1)

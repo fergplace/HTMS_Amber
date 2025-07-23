@@ -7,6 +7,7 @@ from modeller import *
 from modeller.optimizers import MolecularDynamics, ConjugateGradients
 from modeller.automodel import autosched
 from . import _ala_mut
+from . import _defaults
 """ The bullk of the code is taken from the Modeller example script
 mutate_model.py, which is part of the Modeller distribution."""
 
@@ -205,3 +206,9 @@ def tleap_gen(pdbfh_base_name ) -> list:
     return tleap_in
 
 
+def non_ala_file_pop(pdbfh, amber_source ):
+    pdbfh_base_name = os.path.basename(pdbfh).split(".")[0]
+    split(pdbfh, pdbfh_base_name)
+    tleap_file_name = _defaults.tleap_in_gen(pdbfh_base_name)
+    _defaults.all_process_sh_gen(pdbfh_base_name,amber_source = amber_source)
+    _defaults.MPBSA_sh_helper(pdbfh_base_name, amber_source= amber_source)

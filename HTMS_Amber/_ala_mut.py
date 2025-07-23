@@ -103,7 +103,7 @@ def split_and_mut(pdbfh, pdbfh_base_name, name_from, name_to, idx, naming_conv) 
 
  
 def general_method(input_dict : dict, pdbfh, 
-                   pdbfh_base_name, mutation, just_build) : 
+                   pdbfh_base_name, mutation, just_build, amber_source) : 
     """
     general process: 
     input_dict: from input_args_check
@@ -160,7 +160,7 @@ def general_method(input_dict : dict, pdbfh,
     run_MMPBSA_sh_name = _defaults.mmbpsa_sh_gen(input_dict , 
                                        pdbfh_base_name , 
                                        file_handle_mut_base,
-                                       cwd)
+                                       cwd, amber_source)
 
     if just_build:
         pass
