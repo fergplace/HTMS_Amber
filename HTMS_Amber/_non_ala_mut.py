@@ -2,12 +2,12 @@ import sys
 import os
 from abc import ABC, abstractmethod
 import re
-from . import _utils
+import _utils
 from modeller import *
 from modeller.optimizers import MolecularDynamics, ConjugateGradients
 from modeller.automodel import autosched
-from . import _ala_mut
-from . import _defaults
+import _ala_mut
+import _defaults
 """ The bullk of the code is taken from the Modeller example script
 mutate_model.py, which is part of the Modeller distribution."""
 
@@ -47,11 +47,11 @@ def make_restraints(mdl1, aln):
        
 #first argument
 def _extract_mut_info(s):
-    pattern = r'[A-Za-z](\d+)([A-Za-z])'
+    pattern = r'([A-Za-z])(\d+)([A-Za-z])'
     match = re.search(pattern, s)
     if match:
-        respos = int(match.group(1))
-        restyp_single_letter = str(match.group(2))
+        respos = int(match.group(2))
+        restyp_single_letter = str(match.group(3))
         restyp = _utils.amino_acids[restyp_single_letter]
     else:
         raise ValueError(f"Could not extract residue number from string: {s}")
@@ -209,6 +209,6 @@ def tleap_gen(pdbfh_base_name ) -> list:
 def non_ala_file_pop(pdbfh, amber_source ):
     pdbfh_base_name = os.path.basename(pdbfh).split(".")[0]
     split(pdbfh, pdbfh_base_name)
-    tleap_file_name = _defaults.tleap_in_gen(pdbfh_base_name)
+    tleap_file_name = tleap_in_gen(pdbfh_base_name)
     _defaults.all_process_sh_gen(pdbfh_base_name,amber_source = amber_source)
     _defaults.MPBSA_sh_helper(pdbfh_base_name, amber_source= amber_source)

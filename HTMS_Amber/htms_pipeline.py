@@ -5,10 +5,14 @@ import numpy as np
 import argparse 
 import glob
 import shutil
-from. import  _defaults 
-from . import _ala_mut   
-from . import _non_ala_mut
-from . import _utils
+from pathlib import Path
+import _defaults 
+import _ala_mut   
+import _non_ala_mut
+import _utils
+
+
+
 
 
 def input_args_check( input_arg_path = "tmp_input_file.txt") -> dict :
@@ -65,14 +69,15 @@ def non_ala_main(input_dict, just_build, amber_source ):
             os.makedirs(dir_str)
             
         _non_ala_mut.general_mutate(modelname=pdbfh_wild_base_name, mutation=mutation)
-        os.chdir(dir_str)
+        
         pdb_file = f"{pdbfh_wild_base_name}{mutation}.pdb"
         subprocess.run(["move", pdb_file, dir_str], shell=True)
+        os.chdir(dir_str)
         _non_ala_mut.non_ala_file_pop(pdb_file, amber_source)
         os.chdir("..")
-        #TODO update this 
-        for in_file in glob.glob("gen_in_files\*.in"):
-            shutil.copy(in_file, dir_str)
+        in_file_path = Path("bash_defaults")
+        for in_file in in_file_path.glob("*.in"):
+            shutil.copy(in_file, Path(dir_str))
 
 def main(args):
     in_file = args.input_file

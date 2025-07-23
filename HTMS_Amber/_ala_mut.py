@@ -1,6 +1,9 @@
 import os
-from . import _utils
-from . import _defaults
+import sys
+import _utils
+import _defaults
+import re
+
 def mutations(pdb_data, name_from, name_to, idx) -> list:
     '''
     pdb_data    : pdb file we want to mutate
@@ -100,7 +103,16 @@ def split_and_mut(pdbfh, pdbfh_base_name, name_from, name_to, idx, naming_conv) 
         pdb_file.close()
     return  file_handle_mut_base
 
-
+def _extract_mut_info(s):
+    pattern = r'([A-Za-z])(\d+)([A-Za-z])'
+    match = re.search(pattern, s)
+    if match:
+        name_from_char = str(match.group(1))
+        idx = str(match.group(2))
+        name_to_char = str(match.group(3))
+    else:
+        raise ValueError(f"Could not extract residue number from string: {s}")
+    return name_from_char, idx, name_to_char
  
 def general_method(input_dict : dict, pdbfh, 
                    pdbfh_base_name, mutation, just_build, amber_source) : 
@@ -110,7 +122,7 @@ def general_method(input_dict : dict, pdbfh,
     mut_num : range(len(input_dict["MUTATIONS"]))
     """
     
-    name_from_char, idx, name_to_char = mutation.split(":")
+    name_from_char, idx, name_to_char = _extract_mut_info(mutation)
     #dict for char to code conversion 
     amino_acid_dict =_utils.amino_acids 
     #convert to 3 letter code
