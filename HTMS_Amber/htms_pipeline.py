@@ -13,8 +13,6 @@ import _utils
 
 
 
-
-
 def input_args_check( input_arg_path = "tmp_input_file.txt") -> dict :
     cwd = os.getcwd()
     input_fields={"WILD_TYPE": [], 
@@ -74,10 +72,18 @@ def non_ala_main(input_dict, just_build, amber_source ):
         subprocess.run(["move", pdb_file, dir_str], shell=True)
         os.chdir(dir_str)
         _non_ala_mut.non_ala_file_pop(pdb_file, amber_source)
+     
         os.chdir("..")
         in_file_path = Path("bash_defaults")
         for in_file in in_file_path.glob("*.in"):
             shutil.copy(in_file, Path(dir_str))
+        if just_build:
+            pass
+        else:
+            os.chdir(dir_str)
+            os.system(f"sbatch all_process.sh")
+            print(f"running *mdcrd gen for {mutation}")
+            os.chdir("..")
 
 def main(args):
     in_file = args.input_file
