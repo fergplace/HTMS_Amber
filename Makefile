@@ -9,12 +9,14 @@ SOURCE_BUILD_DIR := docs_maker/build/html
 deploy-docs:
 	@echo "--- Starting documentation deployment ---"
 
-	# Step 1: Remove all contents from the target 'docs' directory
+	# Remove all contents from the target 'docs' directory
 	@echo "Cleaning contents of $(DOCS_DIR)/..."
-	rm -rf $(DOCS_DIR)/*
+	rm -rf $(DOCS_DIR)
+	mkdir $(DOCS_DIR)
 
-	# Step 2: Copy all files from the source build directory to 'docs'
+
+	# Copy all files from the source build directory to 'docs'
 	@echo "Copying built HTML from $(SOURCE_BUILD_DIR)/ to $(DOCS_DIR)/..."
-	cp -r $(SOURCE_BUILD_DIR)/* $(DOCS_DIR)/
+	cp -r $(SOURCE_BUILD_DIR)/. $(DOCS_DIR)/
 
 	@echo "--- Documentation deployment complete ---"
