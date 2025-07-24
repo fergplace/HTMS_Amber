@@ -63,6 +63,7 @@ exclude_patterns = ['old_index.rst']
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
+html_baseurl = 'https://fergplace.github.io/HTMS_Amber/'
 html_theme = 'alabaster'
 html_static_path = ['_static']
 html_css_files = [
