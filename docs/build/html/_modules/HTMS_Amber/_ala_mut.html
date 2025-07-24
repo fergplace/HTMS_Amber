@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTMS_Amber._ala_mut &#8212; HTMS in Amber 0.1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=8075f449" />
+    <script src="../../_static/documentation_options.js?v=92734c54"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for HTMS_Amber._ala_mut</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">_utils</span>
+<span class="kn">import</span> <span class="nn">_defaults</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<div class="viewcode-block" id="mutations">
+<a class="viewcode-back" href="../../HTMS_Amber.html#HTMS_Amber._ala_mut.mutations">[docs]</a>
+<span class="k">def</span> <span class="nf">mutations</span><span class="p">(</span><span class="n">pdb_data</span><span class="p">,</span> <span class="n">name_from</span><span class="p">,</span> <span class="n">name_to</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    pdb_data    : pdb file we want to mutate</span>
+<span class="sd">    name_from   : three letter name for the initial amino acid </span>
+<span class="sd">    name_to     : three letter name for the final amino acid</span>
+<span class="sd">    idx         : index of the mutation </span>
+<span class="sd">    </span>
+<span class="sd">    returns     : mutated pdb as a list </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span> 
+    <span class="n">records</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;ATOM&#39;</span><span class="p">,</span> <span class="s1">&#39;HETATM&#39;</span><span class="p">,</span> <span class="s1">&#39;TER&#39;</span><span class="p">,</span> <span class="s1">&#39;ANISOU&#39;</span><span class="p">)</span>
+    <span class="n">mutated_ligand</span> <span class="o">=</span> <span class="p">[]</span> 
+    
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">pdb_data</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">records</span><span class="p">):</span>
+            
+            
+            <span class="k">if</span> <span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">17</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="n">name_from</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">22</span><span class="p">:</span><span class="mi">26</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="n">idx</span><span class="p">):</span>
+                <span class="c1">#add cases here for longer ones... </span>
+                <span class="c1">#add case for GLN which has AGLN and BGLN</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">counter</span> <span class="o">&lt;=</span> <span class="mi">4</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;A&quot;</span> <span class="ow">or</span> <span class="n">line</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="o">==</span> <span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="p">:</span> <span class="c1">#count for ALA:  </span>
+                    <span class="n">new_line</span><span class="o">=</span> <span class="n">line</span><span class="p">[:</span><span class="mi">16</span><span class="p">]</span> <span class="o">+</span> <span class="n">name_to</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="n">line</span><span class="p">[</span><span class="mi">20</span><span class="p">:]</span>
+                    <span class="n">mutated_ligand</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_line</span><span class="p">)</span>
+                    <span class="n">counter</span> <span class="o">=</span> <span class="n">counter</span> <span class="o">+</span> <span class="mi">1</span> 
+                    <span class="k">continue</span>
+                <span class="k">else</span> <span class="p">:</span>
+                    <span class="k">continue</span>
+        <span class="n">mutated_ligand</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mutated_ligand</span></div>
+
+
+
+<div class="viewcode-block" id="pdb_split">
+<a class="viewcode-back" href="../../HTMS_Amber.html#HTMS_Amber._ala_mut.pdb_split">[docs]</a>
+<span class="k">def</span> <span class="nf">pdb_split</span><span class="p">(</span><span class="n">pdb_data</span><span class="p">,</span> <span class="n">option</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    pdb_data    : pdb file we want to split</span>
+<span class="sd">    option      : option will determine if we want to get the receptor or the ligand,</span>
+<span class="sd">    receptor =0, ligand =1 </span>
+<span class="sd">     </span>
+<span class="sd">    returns     : split as a list </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">#ignore HET and other line starts: </span>
+    <span class="c1">#NOTE: no need to use the no_HET source files, this will strip the files of the HET</span>
+    <span class="n">ter_state</span> <span class="o">=</span> <span class="mi">0</span> 
+    <span class="n">records</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;ATOM&#39;</span><span class="p">,</span> <span class="s1">&#39;ANISOU&#39;</span><span class="p">,</span> <span class="s1">&#39;TER&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">pdb_data</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">records</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">option</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">ter_state</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span>  <span class="p">:</span> 
+                <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;TER&#39;</span><span class="p">)</span> <span class="p">:</span>
+                    <span class="k">return</span> <span class="n">data</span> <span class="c1">#break once we get to first Ter as option 0</span>
+            
+            <span class="c1">#need to check for Ter after store line starting with Ter due to structure </span>
+            <span class="c1">#of pdb files, TER line belongs to structure. </span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;TER&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">ter_state</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="p">:</span>
+                <span class="n">ter_state</span> <span class="o">=</span><span class="mi">1</span>
+                <span class="k">continue</span> 
+            <span class="k">if</span> <span class="p">(</span><span class="n">option</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">ter_state</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span> 
+                <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="split_and_mut">
+<a class="viewcode-back" href="../../HTMS_Amber.html#HTMS_Amber._ala_mut.split_and_mut">[docs]</a>
+<span class="k">def</span> <span class="nf">split_and_mut</span><span class="p">(</span><span class="n">pdbfh</span><span class="p">,</span> <span class="n">pdbfh_base_name</span><span class="p">,</span> <span class="n">name_from</span><span class="p">,</span> <span class="n">name_to</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">naming_conv</span><span class="p">)</span> <span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdbfh</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span> <span class="p">:</span>
+        <span class="n">pdb_data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="c1">#splits</span>
+    <span class="n">struct_pdb_data</span> <span class="o">=</span> <span class="n">pdb_split</span><span class="p">(</span><span class="n">pdb_data</span><span class="p">,</span> <span class="mi">0</span> <span class="p">)</span>
+    <span class="n">file_handle_structure</span> <span class="o">=</span> <span class="n">pdbfh_base_name</span> <span class="o">+</span> <span class="s2">&quot;_recpt.pdb&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_handle_structure</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pdb_file</span> <span class="p">:</span> 
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">struct_pdb_data</span> <span class="p">:</span> 
+            <span class="n">pdb_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">pdb_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">ligand_pdb</span> <span class="o">=</span> <span class="n">pdb_split</span><span class="p">(</span><span class="n">pdb_data</span><span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
+    <span class="n">file_handle_ligand</span> <span class="o">=</span> <span class="n">pdbfh_base_name</span> <span class="o">+</span> <span class="s2">&quot;_ligand.pdb&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_handle_ligand</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pdb_file</span> <span class="p">:</span> 
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">ligand_pdb</span> <span class="p">:</span> 
+            <span class="n">pdb_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">pdb_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="c1">#mutations:</span>
+    <span class="c1">#ligand_mutation</span>
+    <span class="n">mutation_pdb_data</span> <span class="o">=</span> <span class="n">mutations</span><span class="p">(</span><span class="n">ligand_pdb</span><span class="p">,</span> <span class="n">name_from</span><span class="p">,</span> <span class="n">name_to</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
+    <span class="n">file_handle_mut_base</span> <span class="o">=</span> <span class="n">pdbfh_base_name</span> <span class="o">+</span><span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">naming_conv</span>
+    <span class="n">file_handle_mut</span> <span class="o">=</span> <span class="n">file_handle_mut_base</span> <span class="o">+</span> <span class="s2">&quot;_ligand.pdb&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_handle_mut</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pdb_file</span> <span class="p">:</span> 
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">mutation_pdb_data</span> <span class="p">:</span> 
+            <span class="n">pdb_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">pdb_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="c1">#full file mutation</span>
+    <span class="n">mutation_pdb_data_all</span> <span class="o">=</span> <span class="n">mutations</span><span class="p">(</span><span class="n">pdb_data</span><span class="p">,</span> <span class="n">name_from</span><span class="p">,</span> <span class="n">name_to</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span> 
+    <span class="n">file_handle_mut_all</span> <span class="o">=</span> <span class="n">file_handle_mut_base</span> <span class="o">+</span> <span class="s2">&quot;.pdb&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_handle_mut_all</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pdb_file</span> <span class="p">:</span> 
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">mutation_pdb_data_all</span> <span class="p">:</span> 
+            <span class="n">pdb_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">pdb_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span>  <span class="n">file_handle_mut_base</span></div>
+
+
+<div class="viewcode-block" id="_extract_mut_info">
+<a class="viewcode-back" href="../../HTMS_Amber.html#HTMS_Amber._ala_mut._extract_mut_info">[docs]</a>
+<span class="k">def</span> <span class="nf">_extract_mut_info</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;([A-Za-z])(\d+)([A-Za-z])&#39;</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+        <span class="n">name_from_char</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+        <span class="n">name_to_char</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not extract residue number from string: </span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">name_from_char</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">name_to_char</span></div>
+
+ 
+<div class="viewcode-block" id="general_method">
+<a class="viewcode-back" href="../../HTMS_Amber.html#HTMS_Amber._ala_mut.general_method">[docs]</a>
+<span class="k">def</span> <span class="nf">general_method</span><span class="p">(</span><span class="n">input_dict</span> <span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">pdbfh</span><span class="p">,</span> 
+                   <span class="n">pdbfh_base_name</span><span class="p">,</span> <span class="n">mutation</span><span class="p">,</span> <span class="n">just_build</span><span class="p">,</span> <span class="n">amber_source</span><span class="p">)</span> <span class="p">:</span> 
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    general process: </span>
+<span class="sd">    input_dict: from input_args_check</span>
+<span class="sd">    mut_num : range(len(input_dict[&quot;MUTATIONS&quot;]))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">name_from_char</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">name_to_char</span> <span class="o">=</span> <span class="n">_extract_mut_info</span><span class="p">(</span><span class="n">mutation</span><span class="p">)</span>
+    <span class="c1">#dict for char to code conversion </span>
+    <span class="n">amino_acid_dict</span> <span class="o">=</span><span class="n">_utils</span><span class="o">.</span><span class="n">amino_acids</span> 
+    <span class="c1">#convert to 3 letter code</span>
+    <span class="n">name_from</span>   <span class="o">=</span> <span class="n">amino_acid_dict</span><span class="p">[</span><span class="n">name_from_char</span><span class="p">]</span>
+    <span class="n">name_to</span>     <span class="o">=</span> <span class="n">amino_acid_dict</span><span class="p">[</span><span class="n">name_to_char</span><span class="p">]</span>
+    
+    <span class="c1">#get cwd</span>
+    <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+    <span class="c1">#get the three letter code as a str e.g. E484A</span>
+    <span class="n">naming_conv</span> <span class="o">=</span> <span class="n">name_from_char</span><span class="o">+</span> <span class="n">idx</span> <span class="o">+</span> <span class="n">name_to_char</span> 
+    <span class="c1">#make a directory named: base_name_naming-conv_dir</span>
+    <span class="c1">#string for dir name</span>
+    <span class="n">dir_name</span> <span class="o">=</span> <span class="n">pdbfh_base_name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">naming_conv</span> <span class="o">+</span> <span class="s2">&quot;_dir&quot;</span>
+    <span class="c1">#path to dir</span>
+    <span class="n">dir_name_path</span> <span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">dir_name</span><span class="p">)</span>
+    <span class="c1">#path for other files</span>
+  
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mkdir </span><span class="si">{</span><span class="n">dir_name_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="n">dir_name_path_full</span> <span class="o">=</span> <span class="n">dir_name_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+    <span class="c1">#new name for pdb in the dir</span>
+    <span class="n">pdbfh_in_dir</span> <span class="o">=</span> <span class="n">dir_name_path_full</span> <span class="o">+</span> <span class="n">pdbfh</span>
+    
+    <span class="c1">#copy the base pdb into new dir</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cp </span><span class="si">{</span><span class="n">pdbfh</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">pdbfh_in_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1">#update base name to the file in subdir</span>
+    <span class="c1">#pdbfh_base_name = pdbfh_base_name_in_dir</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">dir_name_path</span><span class="p">)</span> <span class="c1">#note the change back use chdir(&quot;..&quot;)</span>
+    
+    <span class="c1">##TODO make into smaller functions </span>
+    <span class="n">file_handle_mut_base</span> <span class="o">=</span> <span class="n">split_and_mut</span><span class="p">(</span><span class="n">pdbfh</span><span class="p">,</span>
+                                         <span class="n">pdbfh_base_name</span><span class="p">,</span> 
+                                         <span class="n">name_from</span><span class="p">,</span> 
+                                         <span class="n">name_to</span><span class="p">,</span> 
+                                         <span class="n">idx</span><span class="p">,</span>
+                                         <span class="n">naming_conv</span><span class="p">)</span>
+    
+    <span class="c1">######################### tleap gen ######################################</span>
+    
+    
+    <span class="n">tleap_file_name</span> <span class="o">=</span> <span class="n">_defaults</span><span class="o">.</span><span class="n">tleap_in_gen</span><span class="p">(</span> <span class="n">input_dict</span><span class="p">,</span>
+                                    <span class="n">pdbfh_base_name</span><span class="p">,</span> 
+                                    <span class="n">file_handle_mut_base</span><span class="p">)</span>
+    
+
+    <span class="c1">########################## MMPBSA sh file gen #################</span>
+    <span class="n">run_MMPBSA_sh_name</span> <span class="o">=</span> <span class="n">_defaults</span><span class="o">.</span><span class="n">mmbpsa_sh_gen</span><span class="p">(</span><span class="n">input_dict</span> <span class="p">,</span> 
+                                       <span class="n">pdbfh_base_name</span> <span class="p">,</span> 
+                                       <span class="n">file_handle_mut_base</span><span class="p">,</span>
+                                       <span class="n">cwd</span><span class="p">,</span> <span class="n">amber_source</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">just_build</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sbatch </span><span class="si">{</span><span class="n">run_MMPBSA_sh_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">)</span>
+    <span class="k">return</span> </div>
+
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">HTMS in Amber</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">HTMS Amber Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">HTMS_Amber</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Fergus Place.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

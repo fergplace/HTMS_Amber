@@ -1,0 +1,40 @@
+/*
+ * Custom CSS for Alabaster Theme - To increase content width
+ */
+
+
+.body {
+    max-width: 1100px; 
+    margin: 0 auto;    
+    padding-top: 20px; 
+    padding-bottom: 20px; 
+}
+
+div.documentwrapper {
+    margin-right: 230px; 
+
+}
+
+
+div.body {
+    width: auto; 
+}
+
+
+div.sphinxsidebar {
+    width: 280px; 
+}
+
+
+div.footer, div.header, div.relbar, div.bodywrapper {
+    max-width: none; 
+}
+
+div.document {
+    width: auto; 
+}
+
+
+#main-pipeline-title {
+    text-align: center;
+}
