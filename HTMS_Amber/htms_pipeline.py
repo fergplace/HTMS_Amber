@@ -109,32 +109,32 @@ def main(args):
 
     
 if __name__ == '__main__':
-    
-    parser = argparse.ArgumentParser(description="High Throughput Mutational Analsys for MM/PB(GB)SA methods in Amber. The tool supports both Alanine and Non-Alanine scanning mutations. See dcoumentation for more details.")
-    parser.add_argument("--input_file", type=str, help="Input file with the required parameters for the analysis. ")
+
+    parser = argparse.ArgumentParser(description="This tool helps you run high-throughput mutational analysis using MM/PB(GB)SA methods in Amber. It handles both Alanine and Non-Alanine scanning mutations. Check the docs for more details!")
+    parser.add_argument("--input_file", type=str, help="Your input file with all the necessary parameters for the analysis.")
     parser.add_argument(
         "--just_build",
-        action="store_true", 
-        default=False,     
-        help="If set, the .sh files for each run will be made but not run."
+        action="store_true",
+        default=False,
+        help="Set this flag to generate the .sh files for each run without actually executing them."
     )
     parser.add_argument(
         "--amber_path",
         type=str,
-        default=None, 
-        help="Optional: Specify the full path to the AMBERHOME directory. If not provided, the script will attempt to use the AMBERHOME environment variable."
+        default=None,
+        help="Optional: Provide the full path to your AMBERHOME directory. If you skip this, the script will try to use the AMBERHOME environment variable."
     )
     parser.add_argument(
         "--test",
-        action="store_true", 
-        default=False,      
-        help="Optional: Run the script in test mode (e.g., for debugging or dry runs). This will use a fake amber path for users that just wish to test out the pipeline features on their local machines wihout needing Amber"
+        action="store_true",
+        default=False,
+        help="Optional: Run in test mode, useful for debugging or dry runs. This uses a dummy Amber path, so you can try out the pipeline features locally without needing a full Amber installation."
     )
     parser.add_argument(
         "--non_ala",
-        action="store_true",  
-        default=False,        
-        help="Optional: Enable Non-Alanine scanning mutations. By default, Alanine scanning is assumed. Note you can still perform Alanine Mutations with this method, but it will force a modeller call. We suggest doing any Alanine scanning on its own, i.e. deploy the ala and non_ala pipelines."
+        action="store_true",
+        default=False,
+        help="Optional: Enable Non-Alanine scanning. Alanine scanning is the default. You *can* still do Alanine mutations with this, but it'll involve a MODELLER call. We recommend running Alanine scanning separately (i.e., deploy the Ala and Non-Ala pipelines independently)."
     )
-    args= parser.parse_args()
+    args = parser.parse_args()
     main(args)
