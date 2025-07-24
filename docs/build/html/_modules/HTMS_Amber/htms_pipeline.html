@@ -8,7 +8,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d1102ebc" />
     <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=686e5160" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
-    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=8075f449" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=c0885157" />
     <script src="../../_static/documentation_options.js?v=92734c54"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
@@ -158,34 +158,34 @@
 
     
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    
-    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;High Throughput Mutational Analsys for MM/PB(GB)SA methods in Amber. The tool supports both Alanine and Non-Alanine scanning mutations. See dcoumentation for more details.&quot;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--input_file&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Input file with the required parameters for the analysis. &quot;</span><span class="p">)</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;This tool helps you run high-throughput mutational analysis using MM/PB(GB)SA methods in Amber. It handles both Alanine and Non-Alanine scanning mutations. Check the docs for more details!&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--input_file&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Your input file with all the necessary parameters for the analysis.&quot;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--just_build&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> 
-        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>     
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;If set, the .sh files for each run will be made but not run.&quot;</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Set this flag to generate the .sh files for each run without actually executing them.&quot;</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--amber_path&quot;</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Optional: Specify the full path to the AMBERHOME directory. If not provided, the script will attempt to use the AMBERHOME environment variable.&quot;</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Optional: Provide the full path to your AMBERHOME directory. If you skip this, the script will try to use the AMBERHOME environment variable.&quot;</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--test&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> 
-        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>      
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Optional: Run the script in test mode (e.g., for debugging or dry runs). This will use a fake amber path for users that just wish to test out the pipeline features on their local machines wihout needing Amber&quot;</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Optional: Run in test mode, useful for debugging or dry runs. This uses a dummy Amber path, so you can try out the pipeline features locally without needing a full Amber installation.&quot;</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--non_ala&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>  
-        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>        
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Optional: Enable Non-Alanine scanning mutations. By default, Alanine scanning is assumed. Note you can still perform Alanine Mutations with this method, but it will force a modeller call. We suggest doing any Alanine scanning on its own, i.e. deploy the ala and non_ala pipelines.&quot;</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Optional: Enable Non-Alanine scanning. Alanine scanning is the default. You *can* still do Alanine mutations with this, but it&#39;ll involve a MODELLER call. We recommend running Alanine scanning separately (i.e., deploy the Ala and Non-Ala pipelines independently).&quot;</span>
     <span class="p">)</span>
-    <span class="n">args</span><span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
     <span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 </pre></div>
 

@@ -1,19 +1,21 @@
 # HTMS Amber Examples #
 
-  
- 
+The figures and tables presented in this section are generated using the `tables_and_figures` notebook in the `data_analysis` folder within this repo.
 
-  |                         | PPRM | mean | p_skewness | std  |
-  |:------------------------|-----:|-----:|-----------:|-----:|
-  | $\Delta \Delta G_{\text{bind}}$ GB5 Mbondi2 BD       | 0.07 | -0.39 |      -5.07 | 1.56 |
-  | $\Delta \Delta G_{\text{bind}}$ GB66 Mbondi2 BD      | 0.12 | -0.36 |      -5.64 | 1.58 |
-  | $\Delta \Delta G_{\text{bind}}$ PB Mbondi2 BD        | 0.40 | -0.14 |      -3.71 | 1.52 |
-  | $\Delta \Delta G_{\text{bind}}$ Experimental BD     | 0.01 | -1.00 |      -2.10 | 1.51 |
+Moreover, within the `data_analysis` folder, we include CSVs containing the results presented in the paper (the application of the pipeline to the SARS-CoV-2-ACE2).
 
-    
+
 ![png](updated_figure_code_c_files/updated_figure_code_c_4_1.png)
-    
+Histograms with Kernel Density Estimation (KDE) of the predicted $\Delta\Delta G_{bind}$ (kcal/mol) are presented. These are shown over two GB models (GB5, GB66) and a PB model, all with Mbondi2 radii, and compared with DMS resultsfor Alanine scanning.
 
+The outputs from the Alanine scanning pipeline are divided into three sections to better visualize the impact of mutations:
+* **A) BD**
+* **B) N-BS**
+* **C) BS**
+
+```{note}
+Horizontal scales are limited in these histograms to highlight high-density regions for each section.
+```
 
 | | PPRM | mean | p_skewness | std |
 |:---|---:|---:|---:|---:|
@@ -30,45 +32,30 @@
 | $\Delta \Delta G_{\text{bind}}$ GB66 OPT5D BS | 0.03 | -4.26 | -1.53 | 5.51 |
 | $\Delta \Delta G_{\text{bind}}$ Experimental BS | 0.01 | -1.05 | -0.91 | 1.27 |
     
-
+Statistical features of the $\Delta\Delta G_{bind}$ (kcal/mol) KDEs are presented for GB66 with three different sets of radii (Mbondi2, OPT1, and OPT5D) and DMS, decomposed into the BD, N-BS, and the BS.
 
     
 ![png](updated_figure_code_c_files/updated_figure_code_c_5_1.png)
-    
+Histograms with Kernel Density Estimation (KDE) of the predicted $\Delta\Delta G_{bind}$ (kcal/mol) are presented for GB66, using three different sets of radii: Mbondi2, OPT1, and OPT5D. These are compared with DMS results for Alanine scanning.
 
+The outputs from the Alanine scanning pipeline are divided into three sections to better visualize the impact of mutations:
+* **A) BD**
+* **B) N-BS**
+* **C) BS**
+
+```{note}
+Horizontal scales are limited in these histograms to highlight high-density regions for each section.   
+```
     
 ![png](updated_figure_code_c_files/updated_figure_code_c_6_1.png)
+Error distributions for Alanine scanning are presented, with both PB (blue, $\Delta\Delta\Delta G_{bind,PB}$) and Experimental (orange, $\Delta\Delta\Delta G_{PB}$) results in (kcal/mol) as reference. This is shown for the GB5 mbondi2, GB66 mbondi2, GB66 OPT1, and GB66 OPT5D models.
+
+* **A) $\Delta\Delta\Delta G_{bind}$ comparison over the BD.**
+* **B) $\Delta\Delta\Delta G_{bind}$ comparison over the N-BS.**
+* **C) $\Delta\Delta\Delta G_{bind}$ comparison over the BS.**
+
     
-| Model | GB5 Mbondi2 | GB66 Mbondi2 | PB |
-|:---|---:|---:|---:|
-| RMSE $\Delta \Delta \Delta G_{\text{bind,exp}}$ BD | **2.17** | 2.27 | 2.37 |
-| mean $\Delta \Delta \Delta G_{\text{bind,exp}}$ BD | -0.61 | -0.64 | **-0.86** |
-| corr $\Delta \Delta \Delta G_{\text{bind,exp}}$ BD | 0.08 | 0.01 | **-0.07** |
-| RMSE of worst 20\% $\Delta \Delta \Delta G_{\text{bind,exp}}$ BD | **4.66** | 4.90 | 4.92 |
-| RMSE $\Delta \Delta \Delta G_{\text{bind,exp}}$ N-BS | **1.80** | 1.85 | 2.10 |
-| mean $\Delta \Delta \Delta G_{\text{bind,exp}}$ N-BS | -0.97 | -0.97 | **-1.03** |
-| corr $\Delta \Delta \Delta G_{\text{bind,exp}}$ N-BS | 0.14 | -0.01 | **-0.04** |
-| RMSE of worst 20\% $\Delta \Delta \Delta G_{\text{bind,exp}}$ N-BS | **3.86** | 3.95 | 4.31 |
-| RMSE $\Delta \Delta \Delta G_{\text{bind,exp}}$ BS | 4.14 | 4.47 | **4.00** |
-| mean $\Delta \Delta \Delta G_{\text{bind,exp}}$ BS | 2.49 | 2.22 | **0.62** |
-| corr $\Delta \Delta \Delta G_{\text{bind,exp}}$ BS | 0.25 | -0.01 | **-0.24** |
-| RMSE of worst 20\% $\Delta \Delta \Delta G_{\text{bind,exp}}$ BS | 7.71 | 8.71 | **7.65** |
 
-
-| Model | GB5 Mbondi2 | GB66 Mbondi2 |
-|:---|---:|---:|
-| RMSE $\Delta \Delta \Delta G_{\text{bind,PB}}$ BD | 1.45 | **1.31** |
-| mean $\Delta \Delta \Delta G_{\text{bind,PB}}$ BD | 0.25 | **0.22** |
-| corr $\Delta \Delta \Delta G_{\text{bind,PB}}$ BD | **0.57** | 0.65 |
-| RMSE of worst 20\% $\Delta \Delta \Delta G_{\text{bind,PB}}$ BD | 3.09 | **2.75** |
-| RMSE $\Delta \Delta \Delta G_{\text{bind,PB}}$ N-BS | **0.97** | 1.15 |
-| mean $\Delta \Delta \Delta G_{\text{bind,PB}}$ N-BS | **0.06** | 0.06 |
-| corr $\Delta \Delta \Delta G_{\text{bind,PB}}$ N-BS | 0.05 | **-0.50** |
-| RMSE of worst 20\% $\Delta \Delta \Delta G_{\text{bind,PB}}$ N-BS | **2.11** | 2.54 |
-| RMSE $\Delta \Delta \Delta G_{\text{bind,PB}}$ BS | 3.50 | **2.27** |
-| mean $\Delta \Delta \Delta G_{\text{bind,PB}}$ BS | 1.87 | **1.59** |
-| corr $\Delta \Delta \Delta G_{\text{bind,PB}}$ BS | **0.63** | 0.90 |
-| RMSE of worst 20\% $\Delta \Delta \Delta G_{\text{bind,PB}}$ BS | 5.95 | **3.68** |
 
 | Model | GB5 Mbondi2 | GB66 Mbondi2 | GB66 OPT1 | GB66 OPT5D |
 |:---|---:|---:|---:|---:|
@@ -84,3 +71,5 @@
 | RMSE $\Delta \Delta \Delta G_{\text{bind,PB}}$ BS | 3.50 | **2.27** | 3.49 | 3.84 |
 | PCC $\Delta \Delta \Delta G_{\text{bind,PB}}$ BS | **0.63** | 0.90 | 0.89 | 0.87 |
 | RMSE of worst 20\% $\Delta \Delta \Delta G_{\text{bind,PB}}$ BS | 5.95 | **3.68** | 5.65 | 6.31 |
+
+Statistical information for MMGBSA results for Alanine scanning is provided with respect to DMS data ($\Delta\Delta\Delta G_{bind, exp}$ (kcal/mol)) over multiple GB variants and radii. The results are calculated with respect to the BD, N-BS, and the BS.

@@ -5,6 +5,38 @@ This documentation section is dedicated to illustrating the High Throughput Muta
 ![](_static/TOC.png)
 <p style="text-align: center;">A General Overview of the pipeline with its potential applications for high-throughput calculations of changes in binding free energies of multiple mutations</p>
 
+
+
+
+## Command-Line Usage
+
+You can get a quick overview of the pipeline's command-line arguments by running it with the `--help` flag:
+
+```console
+$ python htms_pipeline.py --help
+```
+usage: htms_pipeline.py [-h] [`--input_file` INPUT_FILE] [`--just_build`]
+                        [`--amber_path` AMBER_PATH] [`--test`] [`--non_ala`]
+
+`-h`, `--help`
+:   show this help message and exit
+
+`--input_file` *INPUT_FILE*
+:   Your input file with all the necessary parameters for the analysis.
+
+`--just_build`
+:   Set this flag to generate the .sh files for each run without actually executing them.
+
+`--amber_path` *AMBER_PATH*
+:   Optional: Provide the full path to your AMBERHOME directory. If you skip this, the script will try to use the AMBERHOME environment variable.
+
+`--test`
+:   Optional: Run in test mode, useful for debugging or dry runs. This uses a dummy Amber path, so you can try out the pipeline features locally without needing a full Amber installation.
+
+`--non_ala`
+:   Optional: Enable Non-Alanine scanning. Alanine scanning is the default. You *can* still do Alanine mutations with this, but it'll involve a MODELLER call. We recommend running Alanine scanning separately (i.e., deploy the Ala and Non-Ala pipelines independently).
+
+
 ## Overview of Alanine Scanning
 
 ### Without *mcdrd files
@@ -18,11 +50,15 @@ To run the Alanine Scanning pipeline edit the tmp_input_file.txt according your 
 
 For the purposes of demonstrating the workflow we are calling htms_pipeline.py from the example direcotry. Moreover, we are making use of the --just_build option to not actully run our mmpbsa.py calls. This is done to showcase the standard output format.
 
-`HTMS_Amber\examples$ python ..\HTMS_Amber\htms_pipeline.py --input_file .\tmp_input_file.txt --just_build --test`
+
+```console
+HTMS_Amber\examples$ python ..\HTMS_Amber\htms_pipeline.py --input_file .\tmp_input_file.txt --just_build --test
+```
 
 Simply call the script as below to delpoy the pipeline properly:
-
-`HTMS_Amber\examples$ python ..\HTMS_Amber\htms_pipeline.py --input_file .\tmp_input_file.txt`
+```console
+HTMS_Amber\examples$ python ..\HTMS_Amber\htms_pipeline.py --input_file .\tmp_input_file.txt
+```
 
 We note `mmpbsa.in` in placed within the directory the pipeline is deployed from and shared amoung all runs.
 
@@ -31,7 +67,13 @@ We note `mmpbsa.in` in placed within the directory the pipeline is deployed from
 
 In order to handle non-Alanine mutations we opt to incorporate a call to MODELLER for mutated pdb file generation.
 
-`HTMS_Amber\examples$ python ..\HTMS_Amber\htms_pipeline.py --input_file .\non_ala_tmp_input_file.txt --just_build --test --non_ala`
+```{note}
+The Non-Alanine Mutations pipeline requires an active installation of [MODELLER](https://salilab.org/modeller/). Please consult their official documentation for detailed instructions on how to install and configure it for your environment.
+```
+
+```console
+HTMS_Amber\examples$ python ..\HTMS_Amber\htms_pipeline.py --input_file .\non_ala_tmp_input_file.txt --just_build --test --non_ala
+```
 
 We note the current implementation of the non_alanine scanning pipeline will require the user to first run production runs, then mmpbsa. Given this we opt to dispatch these separetley so we can make use of GPU production, and then scale back to minimal cpu and memory requirements for the mmpbsa.py portion
 
