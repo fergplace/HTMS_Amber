@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTMS_Amber._non_ala_mut &#8212; HTMS in Amber 0.1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=c0885157" />
+    <script src="../../_static/documentation_options.js?v=92734c54"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for HTMS_Amber._non_ala_mut</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">_utils</span>
+<span class="kn">from</span> <span class="nn">modeller</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">modeller.optimizers</span> <span class="kn">import</span> <span class="n">MolecularDynamics</span><span class="p">,</span> <span class="n">ConjugateGradients</span>
+<span class="kn">from</span> <span class="nn">modeller.automodel</span> <span class="kn">import</span> <span class="n">autosched</span>
+<span class="kn">import</span> <span class="nn">_ala_mut</span>
+<span class="kn">import</span> <span class="nn">_defaults</span>
+<span class="sd">&quot;&quot;&quot; The bullk of the code is taken from the Modeller example script</span>
+<span class="sd">mutate_model.py, which is part of the Modeller distribution.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="optimize">
+<a class="viewcode-back" href="../../HTMS_Amber.html#HTMS_Amber._non_ala_mut.optimize">[docs]</a>
+<span class="k">def</span> <span class="nf">optimize</span><span class="p">(</span><span class="n">atmsel</span><span class="p">,</span> <span class="n">sched</span><span class="p">):</span>
+    <span class="c1">#conjugate gradient</span>
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">sched</span><span class="p">:</span>
+        <span class="n">step</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span><span class="n">atmsel</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">min_atom_shift</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+    <span class="c1">#md</span>
+    <span class="n">refine</span><span class="p">(</span><span class="n">atmsel</span><span class="p">)</span>
+    <span class="n">cg</span> <span class="o">=</span> <span class="n">ConjugateGradients</span><span class="p">()</span>
+    <span class="n">cg</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span><span class="n">atmsel</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">min_atom_shift</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span></div>
+
+<span class="c1">#molecular dynamics</span>
+<div class="viewcode-block" id="refine">
+<a class="viewcode-back" href="../../HTMS_Amber.html#HTMS_Amber._non_ala_mut.refine">[docs]</a>
+<span class="k">def</span> <span class="nf">refine</span><span class="p">(</span><span class="n">atmsel</span><span class="p">):</span>
+    <span class="c1"># at T=1000, max_atom_shift for 4fs is cca 0.15 A.</span>
+    <span class="n">md</span> <span class="o">=</span> <span class="n">MolecularDynamics</span><span class="p">(</span><span class="n">cap_atom_shift</span><span class="o">=</span><span class="mf">0.39</span><span class="p">,</span> <span class="n">md_time_step</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span>
+                           <span class="n">md_return</span><span class="o">=</span><span class="s1">&#39;FINAL&#39;</span><span class="p">)</span>
+    <span class="n">init_vel</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">its</span><span class="p">,</span> <span class="n">equil</span><span class="p">,</span> <span class="n">temps</span><span class="p">)</span> <span class="ow">in</span> <span class="p">((</span><span class="mi">200</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="p">(</span><span class="mf">150.0</span><span class="p">,</span> <span class="mf">250.0</span><span class="p">,</span> <span class="mf">400.0</span><span class="p">,</span> <span class="mf">700.0</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">)),</span>
+                                <span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">600</span><span class="p">,</span>
+                                 <span class="p">(</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">,</span> <span class="mf">600.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">,</span> <span class="mf">400.0</span><span class="p">,</span> <span class="mf">300.0</span><span class="p">))):</span>
+        <span class="k">for</span> <span class="n">temp</span> <span class="ow">in</span> <span class="n">temps</span><span class="p">:</span>
+            <span class="n">md</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span><span class="n">atmsel</span><span class="p">,</span> <span class="n">init_velocities</span><span class="o">=</span><span class="n">init_vel</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="n">temp</span><span class="p">,</span>
+                         <span class="n">max_iterations</span><span class="o">=</span><span class="n">its</span><span class="p">,</span> <span class="n">equilibrate</span><span class="o">=</span><span class="n">equil</span><span class="p">)</span>
+            <span class="n">init_vel</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<span class="c1">#use homologs and dihedral library for dihedral angle restraints</span>
+<div class="viewcode-block" id="make_restraints">
+<a class="viewcode-back" href="../../HTMS_Amber.html#HTMS_Amber._non_ala_mut.make_restraints">[docs]</a>
+<span class="k">def</span> <span class="nf">make_restraints</span><span class="p">(</span><span class="n">mdl1</span><span class="p">,</span> <span class="n">aln</span><span class="p">):</span>
+   <span class="n">rsr</span> <span class="o">=</span> <span class="n">mdl1</span><span class="o">.</span><span class="n">restraints</span>
+   <span class="n">rsr</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+   <span class="n">s</span> <span class="o">=</span> <span class="n">Selection</span><span class="p">(</span><span class="n">mdl1</span><span class="p">)</span>
+   <span class="k">for</span> <span class="n">typ</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;stereo&#39;</span><span class="p">,</span> <span class="s1">&#39;phi-psi_binormal&#39;</span><span class="p">):</span>
+       <span class="n">rsr</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">restraint_type</span><span class="o">=</span><span class="n">typ</span><span class="p">,</span> <span class="n">aln</span><span class="o">=</span><span class="n">aln</span><span class="p">,</span> <span class="n">spline_on_site</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+   <span class="k">for</span> <span class="n">typ</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;omega&#39;</span><span class="p">,</span> <span class="s1">&#39;chi1&#39;</span><span class="p">,</span> <span class="s1">&#39;chi2&#39;</span><span class="p">,</span> <span class="s1">&#39;chi3&#39;</span><span class="p">,</span> <span class="s1">&#39;chi4&#39;</span><span class="p">):</span>
+       <span class="n">rsr</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">restraint_type</span><span class="o">=</span><span class="n">typ</span><span class="o">+</span><span class="s1">&#39;_dihedral&#39;</span><span class="p">,</span> <span class="n">spline_range</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span>
+                <span class="n">spline_dx</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">spline_min_points</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">aln</span><span class="o">=</span><span class="n">aln</span><span class="p">,</span>
+                <span class="n">spline_on_site</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+       
+<span class="c1">#first argument</span>
+<div class="viewcode-block" id="_extract_mut_info">
+<a class="viewcode-back" href="../../HTMS_Amber.html#HTMS_Amber._non_ala_mut._extract_mut_info">[docs]</a>
+<span class="k">def</span> <span class="nf">_extract_mut_info</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;([A-Za-z])(\d+)([A-Za-z])&#39;</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+        <span class="n">respos</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+        <span class="n">restyp_single_letter</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+        <span class="n">restyp</span> <span class="o">=</span> <span class="n">_utils</span><span class="o">.</span><span class="n">amino_acids</span><span class="p">[</span><span class="n">restyp_single_letter</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not extract residue number from string: </span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">respos</span><span class="p">,</span> <span class="n">restyp</span></div>
+
+
+<div class="viewcode-block" id="mutate_model">
+<a class="viewcode-back" href="../../HTMS_Amber.html#HTMS_Amber._non_ala_mut.mutate_model">[docs]</a>
+<span class="k">class</span> <span class="nc">mutate_model</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelname</span><span class="p">,</span> <span class="n">mutation</span> <span class="p">,</span> <span class="n">chain</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modelname</span> <span class="o">=</span> <span class="n">modelname</span> <span class="c1"># #input file name, base pdb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mutation</span> <span class="o">=</span> <span class="n">mutation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chain</span> <span class="o">=</span> <span class="n">chain</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">respos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">restyp</span><span class="o">=</span><span class="n">_extract_mut_info</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mutation</span><span class="p">)</span>
+        
+        
+<div class="viewcode-block" id="mutate_model._do_mut">
+<a class="viewcode-back" href="../../HTMS_Amber.html#HTMS_Amber._non_ala_mut.mutate_model._do_mut">[docs]</a>
+    <span class="k">def</span> <span class="nf">_do_mut</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">Selection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mdl1</span><span class="o">.</span><span class="n">chains</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">chain</span><span class="p">]</span><span class="o">.</span><span class="n">residues</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">respos</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">mutate</span><span class="p">(</span><span class="n">residue_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">restyp</span><span class="p">)</span></div>
+
+        
+        
+<div class="viewcode-block" id="mutate_model.mutate_pdb">
+<a class="viewcode-back" href="../../HTMS_Amber.html#HTMS_Amber._non_ala_mut.mutate_model.mutate_pdb">[docs]</a>
+    <span class="k">def</span> <span class="nf">mutate_pdb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+       
+        <span class="c1"># Set a different value for rand_seed to get a different final model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">Environ</span><span class="p">(</span><span class="n">rand_seed</span><span class="o">=-</span><span class="mi">49837</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">hetatm</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1">#soft sphere potential</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">edat</span><span class="o">.</span><span class="n">dynamic_sphere</span><span class="o">=</span><span class="kc">False</span>
+        <span class="c1">#lennard-jones potential (more accurate)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">edat</span><span class="o">.</span><span class="n">dynamic_lennard</span><span class="o">=</span><span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">edat</span><span class="o">.</span><span class="n">contact_shell</span> <span class="o">=</span> <span class="mf">4.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">edat</span><span class="o">.</span><span class="n">update_dynamic</span> <span class="o">=</span> <span class="mf">0.39</span>
+        <span class="c1"># Read customized topology file with phosphoserines (or standard one)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">libs</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="s1">&#39;$(LIB)/top_heav.lib&#39;</span><span class="p">)</span>
+        <span class="c1"># Read customized CHARMM parameter library with phosphoserines (or standard one)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">libs</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="s1">&#39;$(LIB)/par.lib&#39;</span><span class="p">)</span>
+        <span class="c1"># Read the original PDB file and copy its sequence to the alignment array:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdl1</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modelname</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ali</span> <span class="o">=</span> <span class="n">Alignment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ali</span><span class="o">.</span><span class="n">append_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mdl1</span><span class="p">,</span>
+                              <span class="n">atom_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modelname</span><span class="p">,</span> 
+                              <span class="n">align_codes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modelname</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_do_mut</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">ali</span><span class="o">.</span><span class="n">append_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mdl1</span><span class="p">,</span> <span class="n">align_codes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modelname</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdl1</span><span class="o">.</span><span class="n">clear_topology</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdl1</span><span class="o">.</span><span class="n">generate_topology</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ali</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdl1</span><span class="o">.</span><span class="n">transfer_xyz</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ali</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdl1</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">initialize_xyz</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">build_method</span><span class="o">=</span><span class="s1">&#39;INTERNAL_COORDINATES&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdl2</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modelname</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdl1</span><span class="o">.</span><span class="n">res_num_from</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mdl2</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">ali</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdl1</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modelname</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">mutation</span><span class="o">+</span><span class="s1">&#39;.tmp&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdl1</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modelname</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">mutation</span><span class="o">+</span><span class="s1">&#39;.tmp&#39;</span><span class="p">)</span>
+        <span class="n">make_restraints</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mdl1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ali</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdl1</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">edat</span><span class="o">.</span><span class="n">nonbonded_sel_atoms</span><span class="o">=</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sched</span> <span class="o">=</span> <span class="n">autosched</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">make_for_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mdl1</span><span class="p">)</span>
+        
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">Selection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mdl1</span><span class="o">.</span><span class="n">chains</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">chain</span><span class="p">]</span><span class="o">.</span><span class="n">residues</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">respos</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdl1</span><span class="o">.</span><span class="n">restraints</span><span class="o">.</span><span class="n">unpick_all</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdl1</span><span class="o">.</span><span class="n">restraints</span><span class="o">.</span><span class="n">pick</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">energy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">randomize_xyz</span><span class="p">(</span><span class="n">deviation</span><span class="o">=</span><span class="mf">4.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdl1</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">edat</span><span class="o">.</span><span class="n">nonbonded_sel_atoms</span><span class="o">=</span><span class="mi">2</span>
+        <span class="n">optimize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sched</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdl1</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">edat</span><span class="o">.</span><span class="n">nonbonded_sel_atoms</span><span class="o">=</span><span class="mi">1</span>
+        <span class="n">optimize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sched</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">energy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdl1</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modelname</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">mutation</span><span class="o">+</span><span class="s1">&#39;.pdb&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modelname</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">mutation</span><span class="o">+</span><span class="s1">&#39;.tmp&#39;</span><span class="p">)</span></div>
+</div>
+
+        
+<div class="viewcode-block" id="multi_mutate_model">
+<a class="viewcode-back" href="../../HTMS_Amber.html#HTMS_Amber._non_ala_mut.multi_mutate_model">[docs]</a>
+<span class="k">class</span> <span class="nc">multi_mutate_model</span><span class="p">(</span><span class="n">mutate_model</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modelname</span><span class="p">,</span> <span class="n">mutation</span><span class="p">,</span>  <span class="n">chain</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modelname</span> <span class="o">=</span> <span class="n">modelname</span> <span class="c1">#input file name, base pdb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chain</span> <span class="o">=</span> <span class="n">chain</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mutation</span> <span class="o">=</span> <span class="n">mutation</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">new_tuple_array_inputs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">muts</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mutation</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">respos</span> <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">restyp</span> <span class="o">=</span> <span class="n">_extract_mut_info</span><span class="p">(</span><span class="n">muts</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">new_tuple_array_inputs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">respos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">restyp</span><span class="p">))</span>
+        
+<div class="viewcode-block" id="multi_mutate_model._do_mut">
+<a class="viewcode-back" href="../../HTMS_Amber.html#HTMS_Amber._non_ala_mut.multi_mutate_model._do_mut">[docs]</a>
+    <span class="k">def</span> <span class="nf">_do_mut</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">respos</span><span class="p">,</span> <span class="n">restyp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_tuple_array_inputs</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">Selection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mdl1</span><span class="o">.</span><span class="n">chains</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">chain</span><span class="p">]</span><span class="o">.</span><span class="n">residues</span><span class="p">[</span><span class="n">respos</span><span class="p">])</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">mutate</span><span class="p">(</span><span class="n">residue_type</span><span class="o">=</span><span class="n">restyp</span><span class="p">)</span></div>
+</div>
+
+        
+      
+<div class="viewcode-block" id="general_mutate">
+<a class="viewcode-back" href="../../HTMS_Amber.html#HTMS_Amber._non_ala_mut.general_mutate">[docs]</a>
+<span class="k">def</span> <span class="nf">general_mutate</span><span class="p">(</span><span class="n">modelname</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                   <span class="n">mutation</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">chain</span> <span class="o">=</span> <span class="s2">&quot;A&quot;</span> <span class="p">):</span>
+    
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">modelname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">))</span> <span class="o">&gt;</span><span class="mi">1</span>  <span class="p">:</span> 
+        <span class="n">mutator</span><span class="o">=</span> <span class="n">multi_mutate_model</span><span class="p">(</span><span class="n">modelname</span><span class="p">,</span><span class="n">mutation</span><span class="p">,</span> <span class="n">chain</span><span class="p">)</span>
+        <span class="n">mutator</span><span class="o">.</span><span class="n">mutate_pdb</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">_extract_mut_info</span><span class="p">(</span><span class="n">modelname</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mutator</span> <span class="o">=</span> <span class="n">mutate_model</span><span class="p">(</span><span class="n">modelname</span><span class="p">,</span><span class="n">mutation</span><span class="p">,</span> <span class="n">chain</span><span class="p">)</span>
+        <span class="n">mutator</span><span class="o">.</span><span class="n">mutate_pdb</span><span class="p">()</span>
+    <span class="k">else</span> <span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid modelname format: </span><span class="si">{</span><span class="n">modelname</span><span class="si">}</span><span class="s2">. Expected format is &#39;&lt;resnum&gt;&lt;resname&gt;&#39; or &#39;&lt;resnum&gt;&lt;resname&gt;_&lt;resnum&gt;&lt;resname&gt;...&#39;&quot;</span><span class="p">)</span></div>
+
+    
+
+<div class="viewcode-block" id="split">
+<a class="viewcode-back" href="../../HTMS_Amber.html#HTMS_Amber._non_ala_mut.split">[docs]</a>
+<span class="k">def</span> <span class="nf">split</span><span class="p">(</span><span class="n">pdbfh</span><span class="p">,</span> <span class="n">pdbfh_base_name</span><span class="p">)</span> <span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdbfh</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span> <span class="p">:</span>
+        <span class="n">pdb_data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="c1">#splits</span>
+    <span class="n">struct_pdb_data</span> <span class="o">=</span> <span class="n">_ala_mut</span><span class="o">.</span><span class="n">pdb_split</span><span class="p">(</span><span class="n">pdb_data</span><span class="p">,</span> <span class="mi">0</span> <span class="p">)</span>
+    <span class="n">file_handle_structure</span> <span class="o">=</span> <span class="n">pdbfh_base_name</span> <span class="o">+</span> <span class="s2">&quot;_recpt.pdb&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_handle_structure</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pdb_file</span> <span class="p">:</span> 
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">struct_pdb_data</span> <span class="p">:</span> 
+            <span class="n">pdb_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">pdb_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">ligand_pdb</span> <span class="o">=</span> <span class="n">_ala_mut</span><span class="o">.</span><span class="n">pdb_split</span><span class="p">(</span><span class="n">pdb_data</span><span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
+    <span class="n">file_handle_ligand</span> <span class="o">=</span> <span class="n">pdbfh_base_name</span> <span class="o">+</span> <span class="s2">&quot;_ligand.pdb&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_handle_ligand</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pdb_file</span> <span class="p">:</span> 
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">ligand_pdb</span> <span class="p">:</span> 
+            <span class="n">pdb_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">pdb_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="tleap_in_gen">
+<a class="viewcode-back" href="../../HTMS_Amber.html#HTMS_Amber._non_ala_mut.tleap_in_gen">[docs]</a>
+<span class="k">def</span> <span class="nf">tleap_in_gen</span><span class="p">(</span> <span class="n">pdbfh_base_name</span> <span class="p">):</span> 
+   
+	<span class="n">tleap_mut_in</span> <span class="o">=</span> <span class="n">tleap_gen</span><span class="p">(</span><span class="n">pdbfh_base_name</span> <span class="p">)</span>
+	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;tleap_mut.in&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tleap</span> <span class="p">:</span> 
+		<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">tleap_mut_in</span> <span class="p">:</span> 
+			<span class="n">tleap</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="n">tleap</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+	<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dos2unix tleap_mut.in&quot;</span><span class="p">)</span> <span class="c1">#not sure if needed. </span>
+	<span class="n">tleap_file_name</span> <span class="o">=</span><span class="s2">&quot;tleap_mut.in&quot;</span>
+    
+	<span class="k">return</span>  <span class="n">tleap_file_name</span></div>
+
+
+<div class="viewcode-block" id="tleap_gen">
+<a class="viewcode-back" href="../../HTMS_Amber.html#HTMS_Amber._non_ala_mut.tleap_gen">[docs]</a>
+<span class="k">def</span> <span class="nf">tleap_gen</span><span class="p">(</span><span class="n">pdbfh_base_name</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    pdbfh_base_name     : base name of the pdb file</span>
+<span class="sd">    returns             : tleap file as a list </span>
+<span class="sd"> </span>
+<span class="sd">    </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">tleap_in</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;source leaprc.protein.ff19SB&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;source leaprc.water.opc&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;set default PBRadii mbondi2</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;com = loadpdb </span><span class="si">{</span><span class="n">pdbfh_base_name</span><span class="si">}</span><span class="s2">.pdb&quot;</span>  <span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;ligand = loadpdb </span><span class="si">{</span><span class="n">pdbfh_base_name</span><span class="si">}</span><span class="s2">_ligand.pdb&quot;</span> <span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;rcp = loadpdb </span><span class="si">{</span><span class="n">pdbfh_base_name</span><span class="si">}</span><span class="s2">_recpt.pdb</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;saveamberparm com </span><span class="si">{</span><span class="n">pdbfh_base_name</span><span class="si">}</span><span class="s2">.prmtop </span><span class="si">{</span><span class="n">pdbfh_base_name</span><span class="si">}</span><span class="s2">.inpcrd&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;saveamberparm ligand </span><span class="si">{</span><span class="n">pdbfh_base_name</span><span class="si">}</span><span class="s2">_ligand.prmtop </span><span class="si">{</span><span class="n">pdbfh_base_name</span><span class="si">}</span><span class="s2">_ligand.inpcrd&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;saveamberparm rcp </span><span class="si">{</span><span class="n">pdbfh_base_name</span><span class="si">}</span><span class="s2">_recpt.prmtop </span><span class="si">{</span><span class="n">pdbfh_base_name</span><span class="si">}</span><span class="s2">_recpt.inpcrd&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;com_md = loadpdb </span><span class="si">{</span><span class="n">pdbfh_base_name</span><span class="si">}</span><span class="s2">.pdb&quot;</span>  <span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;solvatebox com_md OPCBOX 12.0&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;addIons2 com_md Na+ 0&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;saveamberparm com_md </span><span class="si">{</span><span class="n">pdbfh_base_name</span><span class="si">}</span><span class="s2">_solvated.prmtop </span><span class="si">{</span><span class="n">pdbfh_base_name</span><span class="si">}</span><span class="s2">_solvated.inpcrd</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;quit&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">tleap_in</span></div>
+
+
+
+<div class="viewcode-block" id="non_ala_file_pop">
+<a class="viewcode-back" href="../../HTMS_Amber.html#HTMS_Amber._non_ala_mut.non_ala_file_pop">[docs]</a>
+<span class="k">def</span> <span class="nf">non_ala_file_pop</span><span class="p">(</span><span class="n">pdbfh</span><span class="p">,</span> <span class="n">amber_source</span> <span class="p">):</span>
+    <span class="n">pdbfh_base_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">pdbfh</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">split</span><span class="p">(</span><span class="n">pdbfh</span><span class="p">,</span> <span class="n">pdbfh_base_name</span><span class="p">)</span>
+    <span class="n">tleap_file_name</span> <span class="o">=</span> <span class="n">tleap_in_gen</span><span class="p">(</span><span class="n">pdbfh_base_name</span><span class="p">)</span>
+    <span class="n">_defaults</span><span class="o">.</span><span class="n">all_process_sh_gen</span><span class="p">(</span><span class="n">pdbfh_base_name</span><span class="p">,</span><span class="n">amber_source</span> <span class="o">=</span> <span class="n">amber_source</span><span class="p">)</span>
+    <span class="n">_defaults</span><span class="o">.</span><span class="n">MPBSA_sh_helper</span><span class="p">(</span><span class="n">pdbfh_base_name</span><span class="p">,</span> <span class="n">amber_source</span><span class="o">=</span> <span class="n">amber_source</span><span class="p">)</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">HTMS in Amber</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">HTMS Amber Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">HTMS_Amber</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Fergus Place.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
