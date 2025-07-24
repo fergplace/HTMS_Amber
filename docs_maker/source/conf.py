@@ -35,6 +35,7 @@ extensions = [
     'sphinx.ext.autosummary', # For generating summary tables
     'myst_parser',
     'sphinx.ext.mathjax',
+    'sphinx.ext.githubpages',
 ]
 #mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
 #new for md as landing
