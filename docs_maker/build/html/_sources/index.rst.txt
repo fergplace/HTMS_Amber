@@ -17,17 +17,18 @@ HTMS in Amber documentation
    :maxdepth: 2
    :caption: User Guides
 
-   how_to_install
-   how_to_run
+   getting_started
+..    how_to_install
+..    how_to_run
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Methodology
+.. .. toctree::
+..    :maxdepth: 2
+..    :caption: Methodology
 
-   Method_Overview
+..    Method_Overview
 
 .. toctree::
    :maxdepth: 2
    :caption: Developer API
 
-   modules
+   HTMS_Amber
