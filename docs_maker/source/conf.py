@@ -33,7 +33,6 @@ extensions = [
     'sphinx.ext.napoleon',  # For Google/NumPy style docstrings
     'sphinx.ext.viewcode', # To link to source code
     'sphinx.ext.autosummary', # For generating summary tables
-    'sphinx_mdinclude',
     'myst_parser',
     'sphinx.ext.mathjax',
     'sphinx.ext.githubpages',

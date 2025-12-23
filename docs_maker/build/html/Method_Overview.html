@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Methods: Binding Free Energy Calculation &#8212; HTMS in Amber 0.1.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=b8c46d2f" />
+    <script src="_static/documentation_options.js?v=92734c54"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["\\(", "\\)"], ["$", "$"]], "displayMath": [["\\[", "\\]"], ["$$", "$$"]], "processEscapes": true, "packages": {"[+]": ["ams", "color", "physics", "cancel", "extpfeil", "mhchem", "ams", "braket", "unicode"]}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="canonical" href="https://fergplace.github.io/HTMS_Amber/Method_Overview.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="HTMS_Amber" href="modules.html" />
+    <link rel="prev" title="Alanine Scanning" href="how_to_run.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section class="tex2jax_ignore mathjax_ignore" id="methods-binding-free-energy-calculation">
+<h1>Methods: Binding Free Energy Calculation<a class="headerlink" href="#methods-binding-free-energy-calculation" title="Link to this heading">¶</a></h1>
+<section id="binding-free-energy-decomposition">
+<h2>1. Binding Free Energy Decomposition<a class="headerlink" href="#binding-free-energy-decomposition" title="Link to this heading">¶</a></h2>
+<p>The Binding Free Energy (BFE) of a complex is determined by the change in enthalpy (<span class="math notranslate nohighlight">\(\Delta H\)</span>) and entropy (<span class="math notranslate nohighlight">\(\Delta S\)</span>) at a given temperature (<span class="math notranslate nohighlight">\(T\)</span>):</p>
+<div class="math notranslate nohighlight">
+\[\Delta G_{\text{bind}} = \Delta H - T\Delta S\]</div>
+<p><img alt="png" src="_images/MMPBSA_dia_smoll.drawio.png" /></p>
+<p>In a computational framework, <span class="math notranslate nohighlight">\(\Delta G_{\text{bind}}\)</span> is estimated using a thermodynamic cycle that relates the vacuum binding energy to the solvation free energies of the complex, receptor, and ligand:</p>
+<div class="math notranslate nohighlight">
+\[\Delta G_{\text{bind, solv}}^{\circ} = \Delta G_{\text{bind, vacuum}}^{\circ} + \Delta G_{\text{complex}}^{\circ} - (\Delta G_{\text{ligand}}^{\circ} + \Delta G_{\text{receptor}}^{\circ})\]</div>
+<p><img alt="png" src="_more_figs/Figures/MMPBSA_dia_clean.drawio.png" /></p>
+<p>The solvation term (<span class="math notranslate nohighlight">\(\Delta G_{\text{solv}}^{\circ}\)</span>) is split into polar and non-polar components, while the vacuum term accounts for molecular mechanics energy (<span class="math notranslate nohighlight">\(\Delta E_{\text{MM}}\)</span>) and configurational entropy (<span class="math notranslate nohighlight">\((T\Delta S)^*\)</span>):</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\Delta G_{\text{solv}}^{\circ} = \Delta G_{\text{polar}}^{\circ} + \Delta G_{\text{non-polar}}^{\circ}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\Delta G_{\text{vacuum}}^{\circ} = \Delta E_{\text{MM}} - (T\Delta S)^*\)</span></p></li>
+</ul>
+</section>
+<section id="mm-pb-gb-sa-framework">
+<h2>2. MM/PB(GB)SA Framework<a class="headerlink" href="#mm-pb-gb-sa-framework" title="Link to this heading">¶</a></h2>
+<p>The MM/PB(GB)SA approach is an all-atom end-point method. It calculates the average BFE over a set of uncorrelated snapshots extracted from a Molecular Dynamics (MD) simulation trajectory.</p>
+<p>This study utilizes a <strong>single-trajectory protocol</strong>, where the average BFE is determined by:</p>
+<div class="math notranslate nohighlight">
+\[\Delta G_{\text{bind}} = \langle G_{\text{complex, i}} - G_{\text{protein, i}} - G_{\text{ligand, i}} \rangle_i\]</div>
+<p><img alt="png" src="_more_figs/Figures/MMPBSA_dia_snapsdrawio.png.png" /></p>
+<section id="solvation-free-energy-components">
+<h3>Solvation Free Energy Components<a class="headerlink" href="#solvation-free-energy-components" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Polar Component:</strong> Calculated using either the <strong>Poisson-Boltzmann (PB)</strong> method (a grid-based numerical solution) or the <strong>Generalized Born (GB)</strong> model (an analytical approximation). While PB is often more accurate, GB models (like GB5 and GBNSR6/GB66) are preferred for large systems due to computational efficiency.</p></li>
+<li><p><strong>Non-Polar Component:</strong> Estimated based on the Solvent-Accessible Surface Area (SASA): <span class="math notranslate nohighlight">\(\Delta G_{\text{nonpolar}} = \gamma * SASA\)</span>.</p></li>
+<li><p><strong>Entropy:</strong> Omitted in this study. Localized single-residue mutations typically result in minimal entropic changes compared to the significant enthalpic contributions observed in Deep Mutational Scanning (DMS).</p></li>
+</ul>
+</section>
+</section>
+<section id="gas-phase-energy-and-atomic-radii">
+<h2>3. Gas-Phase Energy and Atomic Radii<a class="headerlink" href="#gas-phase-energy-and-atomic-radii" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Force Field:</strong> Calculations use <strong>ff19SB</strong> in AMBER23, optimized for the <strong>OPC</strong> water model.</p></li>
+<li><p><strong>Atomic Radii:</strong> Implicit solvent predictions are highly sensitive to the Dielectric Boundary. We evaluate three sets: <strong>Mbondi2</strong>, <strong>OPT1</strong> (optimized for polar <span class="math notranslate nohighlight">\(\Delta \Delta G\)</span>), and <strong>OPT5D</strong> (optimized for both solvation and binding errors).</p></li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">HTMS in Amber</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">User Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="how_to_install.html">HTMS_Amber: Alanine &amp; Non-Alanine Scanning Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_install.html#installation">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_run.html">Alanine Scanning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_run.html#non-alanine-mutations">Non-Alanine Mutations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Methodology</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Methods: Binding Free Energy Calculation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#binding-free-energy-decomposition">1. Binding Free Energy Decomposition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mm-pb-gb-sa-framework">2. MM/PB(GB)SA Framework</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gas-phase-energy-and-atomic-radii">3. Gas-Phase Energy and Atomic Radii</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">HTMS_Amber</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="how_to_run.html" title="previous chapter">Alanine Scanning</a></li>
+      <li>Next: <a href="modules.html" title="next chapter">HTMS_Amber</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Fergus Place.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/Method_Overview.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
