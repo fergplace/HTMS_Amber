@@ -109,7 +109,7 @@ html_theme_options = {
     "navbar_align": "left",
     # CRITICAL: Setting this to 0 moves all page links out of the top header 
     # and into the left sidebar for a cleaner look.
-    "header_links_before_dropdown": 0, 
+    "header_links_before_dropdown": 2, 
     
     # 3. Sidebar and Content Navigation
     # Control the left (primary) and right (secondary) sidebars
@@ -122,16 +122,26 @@ html_theme_options = {
     "pygments_light_style": "tango",
     "pygments_dark_style": "monokai",
     
+    "secondary_sidebar_items": ["page-toc"],
     # 5. Footer/Social
     "footer_start": ["copyright"],
     "footer_end": ["sphinx-version", "theme-version"],
 }
 
 # Define what appears in the sidebars
+# html_sidebars = {
+#     "**": [
+#         "sidebar-nav-bs",     # Global site navigation (Left)
+#     ]
+# }
+
 html_sidebars = {
-    "**": [
-        "sidebar-nav-bs",     # Global site navigation (Left)
-    ]
+    # For the API section (assuming your modules/API use .rst)
+    "modules/**": ["sidebar-nav-bs", "sourcelink"],
+    "HTMS_Amber/**": ["sidebar-nav-bs", "sourcelink"],
+    
+    # For everything else (User Guides/MD), only show navigation
+    "**": ["sidebar-nav-bs"]
 }
 
 # -- Options for HTML output -------------------------------------------------
