@@ -8,31 +8,6 @@
 
 .. .. mdinclude:: landing_page.md
 
-.. .. .. toctree::
-.. ..    :maxdepth: 2
-.. ..    :caption: Contents:
-   
-.. ..    modules  
-
-.. .. toctree::
-..    :maxdepth: 2
-..    :caption: Getting Started:
-
-..    how_to_install
-..    how_to_run
-
-.. .. toctree::
-..    :maxdepth: 2
-..    :caption: Methodology:
-
-..    Method_Overview
-
-.. .. toctree::
-..    :maxdepth: 2
-..    :caption: Contents:
-   
-..    modules  
-
 HTMS in Amber documentation
 ===========================
 

@@ -61,13 +61,42 @@ templates_path = ['_templates']
 #exclude_patterns = ['old_index.rst']
 exclude_patterns = ['old_index.md', "old_index copy.rst"]
 
+html_theme_options = {
+    # 1. GitHub Icon Link in the top-right navbar
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/fergplace/HTMS_Amber",
+            "icon": "fa-brands fa-square-github",
+            "type": "fontawesome",
+        }
+    ],
+    
+    # 2. Navbar & Logo
+    "logo": {
+        "text": "HTMS in Amber",
+    },
+    "navbar_align": "left",
+    
+    # 3. Dark Mode / Light Mode toggle
+    # PyData theme includes a toggle button by default. 
+    # The styles below set the code highlighting for each mode.
+    "pygments_light_style": "tango",
+    "pygments_dark_style": "monokai",
+    
+    # 4. Footer/Social
+    "footer_start": ["copyright"],
+    "footer_end": ["sphinx-version", "theme-version"],
+}
+
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_baseurl = 'https://fergplace.github.io/HTMS_Amber/'
-html_theme = 'alabaster'
+#html_theme = 'alabaster' #old one
+html_theme = "pydata_sphinx_theme" #testing it 
 html_static_path = ['_static']
-html_css_files = [
-    'custom.css',
-]
+# html_css_files = [
+#     'custom.css',
+# ]
 autosummary_generate = True

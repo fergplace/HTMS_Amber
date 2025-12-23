@@ -11,7 +11,7 @@ In a computational framework, $\Delta G_{\text{bind}}$ is estimated using a ther
 
 $$\Delta G_{\text{bind, solv}}^{\circ} = \Delta G_{\text{bind, vacuum}}^{\circ} + \Delta G_{\text{complex}}^{\circ} - (\Delta G_{\text{ligand}}^{\circ} + \Delta G_{\text{receptor}}^{\circ})$$
 
-![png](_more_figs/Figures/MMPBSA_dia_clean.drawio.png)
+![png](_more_figs/MMPBSA_dia_clean.drawio.png)
 
 The solvation term ($\Delta G_{\text{solv}}^{\circ}$) is split into polar and non-polar components, while the vacuum term accounts for molecular mechanics energy ($\Delta E_{\text{MM}}$) and configurational entropy ($(T\Delta S)^*$):
 
@@ -25,7 +25,7 @@ This study utilizes a **single-trajectory protocol**, where the average BFE is d
 
 $$\Delta G_{\text{bind}} = \langle G_{\text{complex, i}} - G_{\text{protein, i}} - G_{\text{ligand, i}} \rangle_i$$
 
-![png](_more_figs/Figures/MMPBSA_dia_snapsdrawio.png.png)
+![png](_more_figs/MMPBSA_dia_snapsdrawio.png.png)
 
 
 ### Solvation Free Energy Components

@@ -16,7 +16,9 @@ To run the Alanine Scanning pipeline edit the tmp_input_file.txt according your 
 
 For the purposes of demonstrating the workflow we are calling htms_pipeline.py from the example direcotry. Moreover, we are making use of the --just_build option to not actully run our mmpbsa.py calls. This is done to showcase the standard output format. 
 
-`HTMS_Amber\examples$ python ..\HTMS_Amber\htms_pipeline.py --input_file .\tmp_input_file.txt --just_build --test`
+```bash
+HTMS_Amber\examples$ python ..\HTMS_Amber\htms_pipeline.py --input_file .\tmp_input_file.txt --just_build --test
+```
 
 Simply call the script as below to delpoy the pipeline properly:
 
@@ -31,7 +33,9 @@ We note `mmpbsa.in` in placed within the directory the pipeline is deployed from
 
 In order to handle non-Alanine mutations we opt to incorporate a call to MODELLER for mutated pdb file generation. 
 
-`HTMS_Amber\examples$ python ..\HTMS_Amber\htms_pipeline.py --input_file .\non_ala_tmp_input_file.txt --just_build --test --non_ala`
+```bash
+HTMS_Amber\examples$ python ..\HTMS_Amber\htms_pipeline.py --input_file .\non_ala_tmp_input_file.txt --just_build --test --non_ala
+```
 
 We note the current implementation of the non_alanine scanning pipeline will require the user to first run production runs, then mmpbsa. Given this we opt to dispatch these separetley so we can make use of GPU production, and then scale back to minimal cpu and memory requirements for the mmpbsa.py portion 
 
