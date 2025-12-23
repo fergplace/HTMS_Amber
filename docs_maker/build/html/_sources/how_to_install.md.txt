@@ -24,7 +24,7 @@ Download the project to your local machine using one of the following methods:
 
 **Via Command Line:**
 ```bash
-git clone [https://github.com/YOUR_USERNAME/HTMS_Amber.git](https://github.com/YOUR_USERNAME/HTMS_Amber.git)
+git clone #TODO: UPDATE
 cd HTMS_Amber
 ```
 
@@ -35,7 +35,7 @@ conda activate amber_muts
 ```
 
 ### Notes on **MODELLER** installation
-To make full use of the pipline a reistered MODELLER install is required see https://salilab.org/modeller/registration.html 
+To make full use of the pipline a reistered MODELLER install is required see [modeller registration](https://salilab.org/modeller/registration.html )
 
 #### Resource Optimization
 1. Use GPU resources for the production MD runs.
