@@ -60,7 +60,7 @@ mathjax3_config = {
 
 templates_path = ['_templates']
 #exclude_patterns = ['old_index.rst']
-
+exclude_patterns = ['old_index.md', "old_index copy.rst"]
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
