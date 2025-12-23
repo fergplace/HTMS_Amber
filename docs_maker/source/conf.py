@@ -61,6 +61,36 @@ templates_path = ['_templates']
 #exclude_patterns = ['old_index.rst']
 exclude_patterns = ['old_index.md', "old_index copy.rst"]
 
+# html_theme_options = {
+#     # 1. GitHub Icon Link in the top-right navbar
+#     "icon_links": [
+#         {
+#             "name": "GitHub",
+#             "url": "https://github.com/fergplace/HTMS_Amber",
+#             "icon": "fa-brands fa-square-github",
+#             "type": "fontawesome",
+#         }
+#     ],
+    
+#     # 2. Navbar & Logo
+#     "logo": {
+#         "text": "HTMS in Amber",
+#     },
+#     "navbar_align": "left",
+    
+#     # 3. Dark Mode / Light Mode toggle
+#     # PyData theme includes a toggle button by default. 
+#     # The styles below set the code highlighting for each mode.
+#     "pygments_light_style": "tango",
+#     "pygments_dark_style": "monokai",
+    
+#     # 4. Footer/Social
+#     "footer_start": ["copyright"],
+#     "footer_end": ["sphinx-version", "theme-version"],
+# }
+
+
+
 html_theme_options = {
     # 1. GitHub Icon Link in the top-right navbar
     "icon_links": [
@@ -72,21 +102,36 @@ html_theme_options = {
         }
     ],
     
-    # 2. Navbar & Logo
+    # 2. Navbar & Header Layout
     "logo": {
         "text": "HTMS in Amber",
     },
     "navbar_align": "left",
+    # CRITICAL: Setting this to 0 moves all page links out of the top header 
+    # and into the left sidebar for a cleaner look.
+    "header_links_before_dropdown": 0, 
     
-    # 3. Dark Mode / Light Mode toggle
-    # PyData theme includes a toggle button by default. 
-    # The styles below set the code highlighting for each mode.
+    # 3. Sidebar and Content Navigation
+    # Control the left (primary) and right (secondary) sidebars
+    "show_nav_level": 1,
+    "navigation_depth": 4,
+    "collapse_navigation": False,
+    "show_toc_level": 2, # Show sections of the current page in the right sidebar
+    
+    # 4. Dark Mode / Light Mode toggle
     "pygments_light_style": "tango",
     "pygments_dark_style": "monokai",
     
-    # 4. Footer/Social
+    # 5. Footer/Social
     "footer_start": ["copyright"],
     "footer_end": ["sphinx-version", "theme-version"],
+}
+
+# Define what appears in the sidebars
+html_sidebars = {
+    "**": [
+        "sidebar-nav-bs",     # Global site navigation (Left)
+    ]
 }
 
 # -- Options for HTML output -------------------------------------------------

@@ -124,33 +124,44 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="how_to_install.html">
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="how_to_install.html">
     HTMS_Amber: Alanine & Non-Alanine Scanning Pipeline
   </a>
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="how_to_run.html">
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="how_to_run.html">
     Alanine Scanning
   </a>
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="Method_Overview.html">
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="Method_Overview.html">
     Methods: Binding Free Energy Calculation
   </a>
 </li>
 
 
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="modules.html">
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="modules.html">
     HTMS_Amber
   </a>
 </li>
 
+                </ul>
+            </li>
+            
   </ul>
 </nav></div>
       
@@ -566,7 +577,7 @@ returns             : tleap file as a list</p>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-HTMS_Amber.htms_pipeline">HTMS_Amber.htms_pipeline module</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-HTMS_Amber.htms_pipeline">HTMS_Amber.htms_pipeline module</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#HTMS_Amber.htms_pipeline.ala_main"><code class="docutils literal notranslate"><span class="pre">ala_main()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#HTMS_Amber.htms_pipeline.input_args_check"><code class="docutils literal notranslate"><span class="pre">input_args_check()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#HTMS_Amber.htms_pipeline.input_args_from_text"><code class="docutils literal notranslate"><span class="pre">input_args_from_text()</span></code></a></li>
@@ -574,7 +585,7 @@ returns             : tleap file as a list</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#HTMS_Amber.htms_pipeline.non_ala_main"><code class="docutils literal notranslate"><span class="pre">non_ala_main()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-HTMS_Amber._ala_mut">HTMS_Amber._ala_mut module</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-HTMS_Amber._ala_mut">HTMS_Amber._ala_mut module</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#HTMS_Amber._ala_mut._extract_mut_info"><code class="docutils literal notranslate"><span class="pre">_extract_mut_info()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#HTMS_Amber._ala_mut.general_method"><code class="docutils literal notranslate"><span class="pre">general_method()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#HTMS_Amber._ala_mut.mutations"><code class="docutils literal notranslate"><span class="pre">mutations()</span></code></a></li>
@@ -582,7 +593,7 @@ returns             : tleap file as a list</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#HTMS_Amber._ala_mut.split_and_mut"><code class="docutils literal notranslate"><span class="pre">split_and_mut()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-HTMS_Amber._non_ala_mut">HTMS_Amber._non_ala_mut module</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-HTMS_Amber._non_ala_mut">HTMS_Amber._non_ala_mut module</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#HTMS_Amber._non_ala_mut._extract_mut_info"><code class="docutils literal notranslate"><span class="pre">_extract_mut_info()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#HTMS_Amber._non_ala_mut.general_mutate"><code class="docutils literal notranslate"><span class="pre">general_mutate()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#HTMS_Amber._non_ala_mut.make_restraints"><code class="docutils literal notranslate"><span class="pre">make_restraints()</span></code></a></li>

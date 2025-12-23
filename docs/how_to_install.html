@@ -127,33 +127,44 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-<li class="nav-item current active">
-  <a class="nav-link nav-internal" href="#">
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="#">
     HTMS_Amber: Alanine & Non-Alanine Scanning Pipeline
   </a>
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="how_to_run.html">
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="how_to_run.html">
     Alanine Scanning
   </a>
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="Method_Overview.html">
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="Method_Overview.html">
     Methods: Binding Free Energy Calculation
   </a>
 </li>
 
 
-<li class="nav-item ">
-  <a class="nav-link nav-internal" href="modules.html">
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="modules.html">
     HTMS_Amber
   </a>
 </li>
 
+                </ul>
+            </li>
+            
   </ul>
 </nav></div>
       
@@ -479,7 +490,7 @@ conda<span class="w"> </span>activate<span class="w"> </span>amber_muts
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">1. Prerequisites</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#clone-the-repository">2. Clone the Repository</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-and-activate-the-conda-env">3. Create and activate the conda env</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notes-on-modeller-installation">Notes on <strong>MODELLER</strong> installation</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notes-on-modeller-installation">Notes on <strong>MODELLER</strong> installation</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resource-optimization">Resource Optimization</a></li>
 </ul>
 </li>
