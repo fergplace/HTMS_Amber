@@ -25,7 +25,7 @@ This study utilizes a **single-trajectory protocol**, where the average BFE is d
 
 $$\Delta G_{\text{bind}} = \langle G_{\text{complex, i}} - G_{\text{protein, i}} - G_{\text{ligand, i}} \rangle_i$$
 
-![png](_more_figs/MMPBSA_dia_snapsdrawio.png.png)
+![png](_more_figs/MMPBSA_dia_snapsdrawio.png)
 
 
 ### Solvation Free Energy Components
