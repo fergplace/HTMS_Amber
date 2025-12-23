@@ -137,7 +137,7 @@ html_theme_options = {
 
 html_sidebars = {
     # For the API section (assuming your modules/API use .rst)
-    "modules/**": ["sidebar-nav-bs", "sourcelink"],
+    #"modules/**": ["sidebar-nav-bs", "sourcelink"],
     "HTMS_Amber/**": ["sidebar-nav-bs", "sourcelink"],
     
     # For everything else (User Guides/MD), only show navigation
