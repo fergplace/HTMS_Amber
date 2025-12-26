@@ -26,7 +26,7 @@ Simply call the script as below to delpoy the pipeline properly:
 
 We note `mmpbsa.in` in placed within the directory the pipeline is deployed from and shared amoung all runs.  
 
-
+(non-alanine-mutations)=
 # Non-Alanine Mutations
 
 ![png](_more_figs/MMPBSA_Non-Ala_flow_v_1.drawio.png)
