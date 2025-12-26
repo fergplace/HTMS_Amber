@@ -14,8 +14,8 @@ For more details on running simulations, see the Usage Section below.
 You will need:
 - **Conda** or **Mamba**: If you do not have it, see [Miniforge](https://github.com/conda-forge/miniforge).
 - [**AMBER**](https://ambermd.org/): Required for Alanine Scanning and MMPBSA calculations.
-- [**MODELLER**](https://salilab.org/modeller/): Required for multiple point mutations and specific single point mutations (see [Mutation Details](#-non-alanine-mutations)).
-
+- [**MODELLER**](https://salilab.org/modeller/): Required for multiple point mutations and specific single point mutations (see {ref}`non-alanine-mutations`)
+<!-- (see [Mutation Details](#-non-alanine-mutations)).  -->
 ### 2. Clone the Repository
 Download the project to your local machine using one of the following methods:
 
