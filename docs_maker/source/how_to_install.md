@@ -1,10 +1,11 @@
-# HTMS_Amber: Alanine & Non-Alanine Scanning Pipeline
+# HTMS_Amber: High-Throughput Mutational Scanning Pipeline with mmpbsa.py 
 ---
 ### Summary
-This package aims to improve upon the base Alanine scanning method within [Amber](https://ambermd.org/) by offering a rapid and easily accessible computational tool for calculating changes in Binding Free Energy ($\Delta\Delta G_{bind}$) for in silico mutations. 
+This package aims to improve upon the base Alanine scanning method within [Amber](https://ambermd.org/) by offering a rapid and easily accessible computational tool for calculating changes in Binding Free Energy ($\Delta\Delta G_{bind}$) via mmpbsa.py for in silico mutations. 
+
+The package supports all amino acid mutations, including single-point and multi-point mutations. Furthermore, a case study involving SARS-CoV-2 variants and the human ACE2 receptor is provided in the examples section.
 
 For more details on running simulations, see the Usage Section below.
-
 ---
 
 # Installation
