@@ -18,7 +18,7 @@ if str(project_root) not in sys.path:
 else:
     print(f"Sphinx DEBUG: Project root '{project_root}' already in sys.path.")
 
-
+autodoc_mock_imports = ["modeller"]
 
 project = 'HTMS in Amber'
 copyright = '2025, Fergus Place'
