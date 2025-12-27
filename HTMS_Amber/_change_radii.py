@@ -1,7 +1,6 @@
 import os
 
 
-
 def opt_radii(topology):
     '''
     This function is used to update atom radius based on opt standard

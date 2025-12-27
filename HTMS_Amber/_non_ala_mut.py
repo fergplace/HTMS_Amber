@@ -1,13 +1,13 @@
-import sys
 import os
-from abc import ABC, abstractmethod
 import re
-import _utils
-from modeller import *
-from modeller.optimizers import MolecularDynamics, ConjugateGradients
-from modeller.automodel import autosched
+
 import _ala_mut
 import _defaults
+import _utils
+from modeller import *
+from modeller.automodel import autosched
+from modeller.optimizers import ConjugateGradients, MolecularDynamics
+
 """ The bullk of the code is taken from the Modeller example script
 mutate_model.py, which is part of the Modeller distribution."""
 

@@ -4,3 +4,4 @@ convert_notebooks.py merge=ours
 docs_maker/ merge=ours
 docs/ merge=ours
 Makefile merge=ours
+ruff.toml merge=ours

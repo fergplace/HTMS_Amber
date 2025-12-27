@@ -1,8 +1,9 @@
 import os
-import sys
-import _utils
-import _defaults
 import re
+
+import _defaults
+import _utils
+
 
 def mutations(pdb_data, name_from, name_to, idx) -> list:
     '''
