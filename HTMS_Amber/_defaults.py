@@ -1,9 +1,4 @@
 import os
-import sys
-import subprocess
-import numpy as np 
-
-
 
 
 def tleap_gen(pdbfh_base_name,file_handle_mut_all ) -> list:

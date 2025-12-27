@@ -1,4 +1,5 @@
 # HTMS Amber Examples #
+## Case Study: SARS-CoV-2 variants and the human ACE2 Receptor
 
 The figures and tables presented in this section are generated using the `tables_and_figures` notebook in the `data_analysis` folder within this repo.
 

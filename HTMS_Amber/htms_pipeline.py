@@ -1,16 +1,13 @@
+import argparse
 import os
-import sys
-import subprocess
-import numpy as np 
-import argparse 
-import glob
 import shutil
+import subprocess
 from pathlib import Path
-import _defaults 
-import _ala_mut   
+
+import _ala_mut
+import _defaults
 import _non_ala_mut
 import _utils
-
 
 
 def input_args_check( input_arg_path = "tmp_input_file.txt") -> dict :
