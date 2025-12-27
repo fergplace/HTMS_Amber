@@ -8,7 +8,7 @@ The pipeline offers robust capabilities for both:
 
 More comprehensive documentation guides you through the practical aspects of implementing HTMS-Amber, covering essential setup, execution steps, and detailed explanations of its features.
 
-![](docs/_static/TOC.png)
+![](TOC.png)
 *A general overview of the HTMS-Amber pipeline with its potential applications for high-throughput calculations of changes in binding free energies for multiple mutations.*
 
 For comprehensive documentation, including detailed setup instructions, usage examples, command-line arguments, and an in-depth overview of the pipeline's capabilities, please visit our dedicated GitHub Pages site:
